@@ -6,6 +6,7 @@ import { alertKindOf, ALERT_SEV, destOf, creatorOf, type Alert, type AlertKind }
 import { markHelpful, resolveAlert, timeAgo } from '@/lib/alertStore'
 import { Avatar, cx } from './ui'
 import NarrateButton from './NarrateButton'
+import RecordedAudio from './RecordedAudio'
 
 const KIND_ICON: Record<AlertKind, LucideIcon> = {
   road_blocked: Construction, flood: Waves, landslide: Mountain, strike: Megaphone, closed: Lock, cleared: CircleCheck,
@@ -46,7 +47,7 @@ export default function AlertCard({ alert, showPlace = true }: { alert: Alert; s
 
           <div className="mt-2.5 flex flex-wrap items-center gap-2">
             {alert.audioSrc
-              ? <audio src={alert.audioSrc} controls className="h-8 max-w-[220px]" />
+              ? <RecordedAudio src={alert.audioSrc} secs={alert.audioSecs} className="max-w-[260px]" />
               : <NarrateButton text={`${k.label} near ${place?.name}. ${alert.body}`} label="Hear the alert" className="!px-3 !py-1.5 !text-xs" />}
 
             <button type="button" disabled={helped} onClick={() => { markHelpful(alert.id); setHelped(true) }}

@@ -258,7 +258,7 @@ export const alertKindOf = (k: AlertKind) => ALERT_KINDS.find(x => x.key === k)!
 
 export type Alert = {
   id: string; placeId: string; kind: AlertKind; severity: AlertSeverity
-  body: string; byCreatorId: string; audioSrc?: string
+  body: string; byCreatorId: string; audioSrc?: string; audioSecs?: number
   minsAgo?: number; createdAt?: number; resolved?: boolean; helpful: number
 }
 export const SEED_ALERTS: Alert[] = [

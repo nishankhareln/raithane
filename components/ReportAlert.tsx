@@ -4,6 +4,7 @@ import { TriangleAlert, X, Mic, Square, Check } from 'lucide-react'
 import { ALERT_KINDS, alertKindOf, DESTINATIONS, type AlertKind, type AlertSeverity } from '@/lib/mock'
 import { addAlert } from '@/lib/alertStore'
 import { cx } from './ui'
+import RecordedAudio from './RecordedAudio'
 
 export default function ReportAlert({ defaultPlaceId, className }: { defaultPlaceId?: string; className?: string }) {
   const [open, setOpen] = useState(false)
@@ -15,8 +16,11 @@ export default function ReportAlert({ defaultPlaceId, className }: { defaultPlac
   // voice
   const [recording, setRecording] = useState(false)
   const [audioSrc, setAudioSrc] = useState<string | null>(null)
+  const [recSecs, setRecSecs] = useState(0)
   const mrRef = useRef<MediaRecorder | null>(null)
   const chunks = useRef<Blob[]>([])
+  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null)
+  const secsRef = useRef(0)
 
   const pickKind = (k: AlertKind) => { setKind(k); setSev(alertKindOf(k).sev) }
 
@@ -25,16 +29,18 @@ export default function ReportAlert({ defaultPlaceId, className }: { defaultPlac
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
       const mr = new MediaRecorder(stream); chunks.current = []
       mr.ondataavailable = e => e.data.size && chunks.current.push(e.data)
-      mr.onstop = () => { const b = new Blob(chunks.current); const r = new FileReader(); r.onload = () => setAudioSrc(typeof r.result === 'string' ? r.result : null); r.readAsDataURL(b); stream.getTracks().forEach(t => t.stop()) }
+      mr.onstop = () => { const b = new Blob(chunks.current, { type: mr.mimeType || 'audio/webm' }); const r = new FileReader(); r.onload = () => setAudioSrc(typeof r.result === 'string' ? r.result : null); r.readAsDataURL(b); stream.getTracks().forEach(t => t.stop()) }
       mr.start(); mrRef.current = mr; setRecording(true)
+      secsRef.current = 0; setRecSecs(0)
+      timerRef.current = setInterval(() => { secsRef.current += 1; setRecSecs(secsRef.current) }, 1000)
     } catch { alert('Please allow the microphone.') }
   }
-  const stopRec = () => { mrRef.current?.stop(); setRecording(false) }
+  const stopRec = () => { mrRef.current?.stop(); setRecording(false); if (timerRef.current) clearInterval(timerRef.current) }
 
   const submit = () => {
-    addAlert({ placeId, kind, severity: sev, body: body.trim() || alertKindOf(kind).label, byCreatorId: 'maya', audioSrc: audioSrc || undefined })
+    addAlert({ placeId, kind, severity: sev, body: body.trim() || alertKindOf(kind).label, byCreatorId: 'maya', audioSrc: audioSrc || undefined, audioSecs: recSecs || undefined })
     setDone(true)
-    setTimeout(() => { setOpen(false); setDone(false); setBody(''); setAudioSrc(null) }, 1200)
+    setTimeout(() => { setOpen(false); setDone(false); setBody(''); setAudioSrc(null); setRecSecs(0) }, 1200)
   }
 
   return (
@@ -91,7 +97,7 @@ export default function ReportAlert({ defaultPlaceId, className }: { defaultPlac
                       <Square size={12} className="fill-white" /> Stop
                     </button>
                   )}
-                  {audioSrc && !recording && <audio src={audioSrc} controls className="h-8 flex-1" />}
+                  {audioSrc && !recording && <RecordedAudio src={audioSrc} secs={recSecs} className="flex-1" />}
                 </div>
 
                 <button type="button" onClick={submit}

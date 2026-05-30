@@ -5,6 +5,7 @@ import { Mic, Square, Camera, Volume2, ArrowLeft, Minus, Plus, PartyPopper, Pale
 import { DESTINATIONS, CATEGORIES, fmtNpr, photo, type CategoryKey } from '@/lib/mock'
 import { MoneySplit, Media, cx } from '@/components/ui'
 import { addCreation } from '@/lib/userStore'
+import RecordedAudio from '@/components/RecordedAudio'
 
 type Share = 'story' | 'photo' | 'skill'
 
@@ -27,20 +28,25 @@ export default function Upload() {
   const [audioUrl, setAudioUrl] = useState<string | null>(null)
   const [photoUrl, setPhotoUrl] = useState<string | null>(null)
   const [photoData, setPhotoData] = useState<string | null>(null)
+  const [recSecs, setRecSecs] = useState(0)
   const mrRef = useRef<MediaRecorder | null>(null)
   const chunks = useRef<Blob[]>([])
   const fileRef = useRef<HTMLInputElement>(null)
+  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null)
+  const secsRef = useRef(0)
 
   const startRec = async () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
       const mr = new MediaRecorder(stream); chunks.current = []
       mr.ondataavailable = e => e.data.size && chunks.current.push(e.data)
-      mr.onstop = () => { const b = new Blob(chunks.current); setAudioUrl(URL.createObjectURL(b)); setCaptured(true); stream.getTracks().forEach(t => t.stop()) }
+      mr.onstop = () => { const b = new Blob(chunks.current, { type: mr.mimeType || 'audio/webm' }); setAudioUrl(URL.createObjectURL(b)); setCaptured(true); stream.getTracks().forEach(t => t.stop()) }
       mr.start(); mrRef.current = mr; setRecording(true)
+      secsRef.current = 0; setRecSecs(0)
+      timerRef.current = setInterval(() => { secsRef.current += 1; setRecSecs(secsRef.current) }, 1000)
     } catch { alert('Please allow the microphone.') }
   }
-  const stopRec = () => { mrRef.current?.stop(); setRecording(false) }
+  const stopRec = () => { mrRef.current?.stop(); setRecording(false); if (timerRef.current) clearInterval(timerRef.current) }
   const onPhoto = (e: React.ChangeEvent<HTMLInputElement>) => {
     const f = e.target.files?.[0]; if (!f) return
     setPhotoUrl(URL.createObjectURL(f)); setCaptured(true)
@@ -135,7 +141,7 @@ export default function Upload() {
                   <Square size={32} className="fill-white" /><span className="text-xs font-bold">Stop</span>
                 </button>
               )}
-              {audioUrl && <audio src={audioUrl} controls className="w-full" />}
+              {audioUrl && <RecordedAudio src={audioUrl} secs={recSecs} className="w-full" />}
               <p className="text-center text-sm text-stone/55">Speak in your own language. We keep your voice; a youth translator can add Nepali & English later.</p>
             </div>
           )}

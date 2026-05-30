@@ -23,7 +23,7 @@ function saveAll(arr: Alert[]) {
   try { window.dispatchEvent(new Event(EVT)) } catch {}
 }
 
-export function addAlert(a: { placeId: string; kind: AlertKind; severity: AlertSeverity; body: string; byCreatorId: string; audioSrc?: string }) {
+export function addAlert(a: { placeId: string; kind: AlertKind; severity: AlertSeverity; body: string; byCreatorId: string; audioSrc?: string; audioSecs?: number }) {
   const full: Alert = { ...a, id: 'al' + Date.now(), createdAt: Date.now(), helpful: 0 }
   saveAll([full, ...getAlerts()])
   return full
