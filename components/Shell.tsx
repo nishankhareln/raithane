@@ -2,20 +2,20 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
-import { Home, Compass, Sparkles, Store, HeartHandshake, LayoutDashboard, Plus, Search, Bell } from 'lucide-react'
+import { Home, Compass, Sparkles, Store, HeartHandshake, LayoutDashboard, Plus, Search, Bell, User, type LucideIcon } from 'lucide-react'
 import { cx } from './ui'
 import Logo from './Logo'
 import { useAlerts, isActive } from '@/lib/alertStore'
 import { useAuth } from './Auth'
 import { useLang } from '@/lib/i18n'
 
-const NAV = [
+const NAV: { href: string; en: string; ne: string; icon: LucideIcon; auth?: boolean }[] = [
   { href: '/', en: 'Home', ne: 'गृह', icon: Home },
   { href: '/explore', en: 'Explore', ne: 'अन्वेषण', icon: Compass },
   { href: '/vibe', en: 'Vibe', ne: 'भाव', icon: Sparkles },
   { href: '/skills', en: 'Skills', ne: 'सीप', icon: Store },
   { href: '/support', en: 'Support', ne: 'सहयोग', icon: HeartHandshake },
-  { href: '/dashboard', en: 'Dashboard', ne: 'ड्यासबोर्ड', icon: LayoutDashboard },
+  { href: '/dashboard', en: 'Dashboard', ne: 'ड्यासबोर्ड', icon: LayoutDashboard, auth: true },
 ]
 const T = {
   en: { search: 'Search a place, food, legend or skill…', create: 'Create', profile: 'My profile', proto: 'Prototype · payments mocked · every action pays a local' },
@@ -91,7 +91,7 @@ export default function Shell({ children }: { children: React.ReactNode }) {
       <div className="flex flex-1">
         <aside className="sticky top-[3.25rem] hidden h-[calc(100vh-3.25rem)] w-56 shrink-0 flex-col gap-1 self-start border-r border-sand bg-sand/40 p-3 md:flex">
           <nav className="flex flex-1 flex-col gap-1">
-            {NAV.map(n => {
+            {NAV.filter(n => !n.auth || user).map(n => {
               const A = n.icon, on = active(n.href)
               return (
                 <Link key={n.href} href={n.href}
@@ -102,9 +102,11 @@ export default function Shell({ children }: { children: React.ReactNode }) {
               )
             })}
           </nav>
-          <Link href="/creator/maya" className="mt-2 flex items-center gap-3 rounded-xl border border-sand bg-white px-3 py-2.5 text-sm font-bold text-stone/70 hover:bg-paper">
-            <span className="text-lg">👤</span> {t.profile}
-          </Link>
+          {user && (
+            <Link href="/creator/me" className="mt-2 flex items-center gap-3 rounded-xl border border-sand bg-white px-3 py-2.5 text-sm font-bold text-stone/70 hover:bg-paper">
+              <User size={18} /> {t.profile}
+            </Link>
+          )}
           <div className="mt-3 rounded-xl bg-white/70 p-3 text-[10px] leading-relaxed text-stone/40">{t.proto}</div>
         </aside>
 
@@ -114,7 +116,7 @@ export default function Shell({ children }: { children: React.ReactNode }) {
       </div>
 
       <nav className="glass fixed bottom-0 left-0 z-40 flex w-full justify-between border-t border-sand px-1 py-1.5 md:hidden">
-        {NAV.map(n => {
+        {NAV.filter(n => !n.auth || user).map(n => {
           const A = n.icon, on = active(n.href)
           return (
             <Link key={n.href} href={n.href}

@@ -1,9 +1,20 @@
+'use client'
 import Link from 'next/link'
-import { TrendingUp, Eye, Star, Users, Lock, Store, HeartHandshake, BadgeCheck, type LucideIcon } from 'lucide-react'
+import { TrendingUp, Eye, Star, Users, Lock, Store, HeartHandshake, BadgeCheck, LogIn, type LucideIcon } from 'lucide-react'
 import { creatorOf, fmtNpr, split, PLATFORM_FEE } from '@/lib/mock'
 import { Avatar, MoneySplit } from '@/components/ui'
+import { useAuth } from '@/components/Auth'
 
 export default function Dashboard() {
+  const { user, openAuth } = useAuth()
+  if (!user) return (
+    <div className="mx-auto max-w-md py-16 text-center">
+      <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-clay/10 text-clay"><LogIn size={26} /></div>
+      <h1 className="text-2xl font-black text-stone">Sign in to see your dashboard</h1>
+      <p className="mt-1 text-sm text-stone/55">Your earnings and stats are private to your account.</p>
+      <button onClick={() => openAuth('to view your dashboard')} className="mt-5 rounded-full bg-clay px-6 py-2.5 text-sm font-black text-white hover:bg-clay-dark">Sign in</button>
+    </div>
+  )
   const me = creatorOf('maya')
   const grossMonth = Math.round(me.earningsMonth / (1 - PLATFORM_FEE))
   const s = split(grossMonth)
