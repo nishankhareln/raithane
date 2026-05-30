@@ -26,6 +26,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [reason, setReason] = useState('')
 
   useEffect(() => {
+    // seed a ready-to-use demo account on first load
+    try {
+      const a = JSON.parse(localStorage.getItem(ACCTS) || '[]')
+      if (!a.some((x: { email: string }) => x.email === 'demo@raithane.com')) {
+        a.push({ id: 'u_demo', name: 'Demo Traveler', email: 'demo@raithane.com', pw: 'demo123' })
+        localStorage.setItem(ACCTS, JSON.stringify(a))
+      }
+    } catch {}
     try { const s = localStorage.getItem(SESS); if (s) setUser(JSON.parse(s)) } catch {}
     setReady(true)
   }, [])
@@ -103,6 +111,12 @@ function AuthModal({ reason, onClose, login, register }:
             className="w-full text-center text-xs font-semibold text-stone/55">
             {mode === 'login' ? 'New here? Create an account' : 'Already have an account? Sign in'}
           </button>
+          {mode === 'login' && (
+            <button type="button" onClick={() => { setEmail('demo@raithane.com'); setPw('demo123'); setErr('') }}
+              className="w-full rounded-lg bg-forest/10 py-2 text-center text-[11px] font-semibold text-forest">
+              Use demo account · demo@raithane.com / demo123 (tap to fill)
+            </button>
+          )}
           <p className="text-center text-[10px] text-stone/40">Demo auth — stored in your browser, no real server.</p>
         </form>
       </div>

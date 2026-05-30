@@ -61,7 +61,7 @@ export default function Upload() {
     const kind: 'post' | 'skill' = share === 'skill' ? 'skill' : 'post'
     const mediaType = share === 'story' ? 'AUDIO' : share === 'photo' ? 'PHOTO' : 'VIDEO'
     addCreation({
-      id: 'u' + Date.now(), kind, creatorId: 'maya', destinationId: destId || 'kathmandu',
+      id: 'u' + Date.now(), kind, creatorId: 'me', destinationId: destId || 'kathmandu',
       category: kind === 'skill' ? 'SKILL' : (cat || 'CULTURE'),
       type: paid ? 'PREMIUM' : 'FREE',
       title: title.trim() || (kind === 'skill' ? 'My experience' : share === 'photo' ? 'My photo story' : 'My voice story'),

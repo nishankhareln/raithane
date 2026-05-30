@@ -82,7 +82,13 @@ export const CREATORS: Creator[] = [
   { id: 'ram', name: 'Ram Bhatta', img: 'nepali,priest,man', imgSrc: '/local-host.jpg', grad: 'linear-gradient(135deg,#7c3aed,#2563eb)', destinationId: 'pashupatinath', bio: 'Temple guide at Pashupatinath. I explain the rites at the ghats with care and respect.', rating: 4.8, reviews: 67, verified: true, earningsMonth: 22800, followers: 1340, supporters: 21 },
   { id: 'pema', name: 'Pema Sherpa', img: 'tibetan,woman,nepal', grad: 'linear-gradient(135deg,#2563eb,#0891b2)', destinationId: 'boudhanath', bio: 'Boudha local & Buddhist guide. I walk the kora with you and explain what each turn means.', rating: 4.9, reviews: 58, verified: true, earningsMonth: 20400, followers: 1120, supporters: 25 },
 ]
-export const creatorOf = (id: string) => CREATORS.find(c => c.id === id)!
+// returns the seed creator, or a safe "You" fallback for the logged-in user's own ids
+export const creatorOf = (id: string): Creator =>
+  CREATORS.find(c => c.id === id) || {
+    id, name: 'You', img: 'traveler,backpacker,person', grad: 'linear-gradient(135deg,#16a34a,#2563eb)',
+    destinationId: 'kathmandu', bio: 'Your traveler profile on Raithane.',
+    rating: 0, reviews: 0, verified: false, earningsMonth: 0, followers: 0, supporters: 0,
+  }
 
 export type Phrase = { original: string; roman: string; en: string; ne?: string }
 export type Post = {
