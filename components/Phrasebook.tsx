@@ -18,7 +18,7 @@ export default function Phrasebook({ phrases, origLang = 'Nepali', sampleNote, l
     <div className="space-y-2">
       {phrases.map((p, i) => (
         <div key={i} className="flex items-center gap-3 rounded-xl border border-sand bg-white p-3">
-          <button onClick={() => speak(p.ne || p.original, ttsLang)} title="Hear it"
+          <button type="button" onClick={(e) => { e.preventDefault(); speak(p.ne || p.original, ttsLang) }} title="Hear it"
             className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-clay/10 text-clay hover:bg-clay hover:text-white">
             <Volume2 size={17} />
           </button>

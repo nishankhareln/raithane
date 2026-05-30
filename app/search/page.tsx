@@ -3,7 +3,7 @@ import { Suspense } from 'react'
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
 import { Search, ArrowRight } from 'lucide-react'
-import { DESTINATIONS, POSTS, SKILLS, CREATORS, photo } from '@/lib/mock'
+import { DESTINATIONS, POSTS, SKILLS, CREATORS, destImg } from '@/lib/mock'
 import { FeedCard, SkillCard } from '@/components/cards'
 import { Avatar, Stars, Media, SectionHeader } from '@/components/ui'
 import { useCreations, toPost, toSkill } from '@/lib/userStore'
@@ -41,7 +41,7 @@ function Results() {
           <div className="grid gap-3 sm:grid-cols-2">
             {dests.map(d => (
               <Link key={d.id} href={`/destination/${d.slug}`} className="card hover-lift relative block h-28 overflow-hidden rounded-2xl text-white">
-                <Media src={photo(d.img, d.id, 600, 300)} grad={d.grad} className="absolute inset-0 h-full w-full" />
+                <Media src={destImg(d, 600, 300)} grad={d.grad} className="absolute inset-0 h-full w-full" />
                 <div className="absolute bottom-3 left-4"><div className="text-lg font-black">{d.name}</div><div className="text-xs text-white/85">{d.district}</div></div>
               </Link>
             ))}

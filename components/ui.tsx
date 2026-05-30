@@ -49,7 +49,7 @@ export function Avatar({ creator, size = 40, ring = true }: { creator: Creator; 
   return (
     <span className={cx('relative inline-block shrink-0 overflow-hidden rounded-full', ring && 'ring-2 ring-white shadow')}
       style={{ width: size, height: size, background: creator.grad }}>
-      <Img src={photo(creator.img, creator.id, size * 2, size * 2)} className="absolute inset-0 h-full w-full object-cover" />
+      <Img src={creator.imgSrc || photo(creator.img, creator.id, size * 2, size * 2)} className="absolute inset-0 h-full w-full object-cover" />
     </span>
   )
 }

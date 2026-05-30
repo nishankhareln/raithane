@@ -46,8 +46,10 @@ export const vibeOf = (k: VibeKey) => VIBES.find(v => v.key === k)!
 
 export type Destination = {
   id: string; name: string; slug: string; district: string; lat: number; lng: number
-  grad: string; img: string; description: string; vibes: VibeKey[]
+  grad: string; img: string; imgSrc?: string; description: string; vibes: VibeKey[]
 }
+/** real photo if provided, else a keyword image */
+export const destImg = (d: Destination, w = 800, h = 600) => d.imgSrc || photo(d.img, d.id, w, h)
 export const DESTINATIONS: Destination[] = [
   { id: 'bandipur', name: 'Bandipur', slug: 'bandipur', district: 'Tanahun', lat: 27.9333, lng: 84.4167, grad: 'linear-gradient(135deg,#3b39e0,#14b8a6)', img: 'bandipur,nepal,town', vibes: ['offbeat', 'artisan', 'spiritual'], description: 'A preserved Newari hill town with a car-free bazaar, silk-cotton trees, and Himalaya views.' },
   { id: 'panauti', name: 'Panauti', slug: 'panauti', district: 'Kavre', lat: 27.5847, lng: 85.5158, grad: 'linear-gradient(135deg,#7c3aed,#4f46e5)', img: 'panauti,nepal,temple', vibes: ['spiritual', 'festive', 'offbeat'], description: 'One of Nepal’s oldest towns, where two rivers meet and centuries-old temples still hold daily puja.' },
@@ -56,11 +58,15 @@ export const DESTINATIONS: Destination[] = [
   { id: 'ghandruk', name: 'Ghandruk', slug: 'ghandruk', district: 'Kaski', lat: 28.3762, lng: 83.8063, grad: 'linear-gradient(135deg,#3b39e0,#7c3aed)', img: 'ghandruk,annapurna,village', vibes: ['adventure', 'artisan', 'spiritual'], description: 'A stone-paved Gurung village under the Annapurnas — living mountain culture and warm homestays.' },
   { id: 'pokhara', name: 'Pokhara', slug: 'pokhara', district: 'Kaski', lat: 28.2096, lng: 83.9856, grad: 'linear-gradient(135deg,#2563eb,#0891b2)', img: 'pokhara,phewa,lake', vibes: ['adventure', 'foodie', 'offbeat'], description: 'Nepal’s lakeside adventure capital — Phewa Lake, paragliding, and a gateway to the Annapurnas.' },
   { id: 'kathmandu', name: 'Kathmandu', slug: 'kathmandu', district: 'Kathmandu', lat: 27.7172, lng: 85.3240, grad: 'linear-gradient(135deg,#16a34a,#2563eb)', img: 'kathmandu,durbar,square', vibes: ['spiritual', 'festive', 'foodie'], description: 'The valley capital — Durbar squares, living temples, Newari feasts, and centuries of art.' },
+  { id: 'pashupatinath', name: 'Pashupatinath', slug: 'pashupatinath', district: 'Kathmandu', lat: 27.7106, lng: 85.3488, grad: 'linear-gradient(135deg,#7c3aed,#2563eb)', img: 'pashupatinath,temple,kathmandu', vibes: ['spiritual', 'festive', 'offbeat'], description: 'Nepal’s holiest Shiva temple, on the banks of the sacred Bagmati — a UNESCO site of golden roofs, cremation ghats, sadhus and the evening aarti.' },
+  { id: 'boudhanath', name: 'Boudhanath', slug: 'boudhanath', district: 'Kathmandu', lat: 27.7215, lng: 85.3620, grad: 'linear-gradient(135deg,#2563eb,#0891b2)', img: 'boudhanath,stupa,kathmandu', vibes: ['spiritual', 'offbeat', 'artisan'], description: 'One of the world’s largest stupas and the heart of Tibetan Buddhism in Nepal — a giant mandala circled by pilgrims, prayer wheels and butter lamps.' },
+  { id: 'swayambhunath', name: 'Swayambhunath', slug: 'swayambhunath', district: 'Kathmandu', lat: 27.7149, lng: 85.2903, grad: 'linear-gradient(135deg,#16a34a,#2563eb)', img: 'swayambhunath,stupa,monkey,temple', vibes: ['spiritual', 'adventure', 'offbeat'], description: 'The “Monkey Temple” on a hilltop west of the city — the all-seeing eyes of the Buddha, 365 steps, and a legend older than the valley itself.' },
+  { id: 'durbar-square', name: 'Kathmandu Durbar Square', slug: 'durbar-square', district: 'Kathmandu', lat: 27.7045, lng: 85.3070, grad: 'linear-gradient(135deg,#4f46e5,#7c3aed)', img: 'kathmandu,durbar,square,palace', imgSrc: '/durbar-square.png', vibes: ['festive', 'artisan', 'spiritual'], description: 'The old royal plaza of the Malla and Shah kings — Hanuman Dhoka palace, exquisite woodcarving, and the home of the living goddess Kumari.' },
 ]
 export const destOf = (id: string) => DESTINATIONS.find(d => d.id === id)!
 
 export type Creator = {
-  id: string; name: string; img: string; grad: string; destinationId: string
+  id: string; name: string; img: string; imgSrc?: string; grad: string; destinationId: string
   bio: string; rating: number; reviews: number; verified: boolean
   earningsMonth: number; followers: number; supporters: number
 }
@@ -73,6 +79,8 @@ export const CREATORS: Creator[] = [
   { id: 'tashi', name: 'Tashi Lama', img: 'old,man,nepal', grad: 'linear-gradient(135deg,#3b39e0,#7c3aed)', destinationId: 'ghandruk', bio: 'Elder & keeper of mountain rituals. I record what must not be forgotten.', rating: 4.9, reviews: 43, verified: true, earningsMonth: 15200, followers: 760, supporters: 44 },
   { id: 'bikash', name: 'Bikash Pun', img: 'nepali,man,portrait', grad: 'linear-gradient(135deg,#2563eb,#0891b2)', destinationId: 'pokhara', bio: 'Lakeside guide in Pokhara — paragliding spotter, canoe paddler, sunrise chaser.', rating: 4.7, reviews: 88, verified: true, earningsMonth: 26500, followers: 2310, supporters: 29 },
   { id: 'nilam', name: 'Nilam Maharjan', img: 'nepali,woman,portrait', grad: 'linear-gradient(135deg,#16a34a,#2563eb)', destinationId: 'kathmandu', bio: 'Newari food & heritage guide in old Kathmandu. I cook, I tell stories, I walk you through it.', rating: 4.8, reviews: 75, verified: true, earningsMonth: 24000, followers: 1950, supporters: 26 },
+  { id: 'ram', name: 'Ram Bhatta', img: 'nepali,priest,man', imgSrc: '/local-host.jpg', grad: 'linear-gradient(135deg,#7c3aed,#2563eb)', destinationId: 'pashupatinath', bio: 'Temple guide at Pashupatinath. I explain the rites at the ghats with care and respect.', rating: 4.8, reviews: 67, verified: true, earningsMonth: 22800, followers: 1340, supporters: 21 },
+  { id: 'pema', name: 'Pema Sherpa', img: 'tibetan,woman,nepal', grad: 'linear-gradient(135deg,#2563eb,#0891b2)', destinationId: 'boudhanath', bio: 'Boudha local & Buddhist guide. I walk the kora with you and explain what each turn means.', rating: 4.9, reviews: 58, verified: true, earningsMonth: 20400, followers: 1120, supporters: 25 },
 ]
 export const creatorOf = (id: string) => CREATORS.find(c => c.id === id)!
 
@@ -157,6 +165,29 @@ export const POSTS: Post[] = [
       { original: 'पुग्छ नि', roman: 'Pugcha ni', en: 'That’s enough — deal' },
     ],
   },
+
+  // ===== Pashupatinath =====
+  { id: 'ps1', creatorId: 'ram', destinationId: 'pashupatinath', category: 'LEGEND', type: 'PREMIUM', title: 'How Pashupatinath was found', teaser: 'Legend says a cow poured her milk on this spot each day. Villagers dug and found a glowing Shiva lingam — and the temple rose around it.', img: 'pashupatinath,shiva,temple', mediaType: 'AUDIO', priceNpr: 180, language: 'Nepali', likes: 540, views: 8800, durationMin: 9 },
+  { id: 'ps2', creatorId: 'ram', destinationId: 'pashupatinath', category: 'RITUAL', type: 'PREMIUM', title: 'The evening Bagmati aarti', teaser: 'At dusk, lamps, bells and chanting fill the riverbank as priests offer fire to the sacred Bagmati. What each gesture means…', img: 'aarti,river,lamp,nepal', mediaType: 'VIDEO', priceNpr: 250, language: 'Nepali', likes: 712, views: 10400, durationMin: 12 },
+  { id: 'ps3', creatorId: 'ram', destinationId: 'pashupatinath', category: 'FESTIVAL', type: 'FREE', title: 'Maha Shivaratri at Pashupati', teaser: 'Once a year, hundreds of thousands of pilgrims and saffron-clad sadhus fill the temple for the great night of Shiva.', img: 'shivaratri,sadhu,pashupatinath', mediaType: 'PHOTO', priceNpr: 0, language: 'Nepali', likes: 480, views: 7600 },
+  { id: 'ps4', creatorId: 'ram', destinationId: 'pashupatinath', category: 'HISTORY', type: 'FREE', title: 'Visiting respectfully', teaser: 'Only Hindus enter the main courtyard; others get a beautiful view from across the river. Dress modestly, and never photograph cremations.', img: 'pashupatinath,bagmati,ghat', mediaType: 'TEXT', priceNpr: 0, language: 'Nepali', likes: 0, views: 2100, isTip: true, tipHelpful: 264 },
+
+  // ===== Boudhanath =====
+  { id: 'bd1', creatorId: 'pema', destinationId: 'boudhanath', category: 'LEGEND', type: 'PREMIUM', title: 'The legend of Boudha Stupa', teaser: 'A poor woman asked a king for land the size of one buffalo hide — then cut it into fine strips to encircle this enormous dome. The full story…', img: 'boudhanath,stupa,prayer,flags', mediaType: 'AUDIO', priceNpr: 180, language: 'Nepali', likes: 388, views: 5200, durationMin: 8 },
+  { id: 'bd2', creatorId: 'pema', destinationId: 'boudhanath', category: 'RITUAL', type: 'FREE', title: 'Walking the kora at dusk', teaser: 'As lamps light up, pilgrims circle the stupa clockwise, spinning prayer wheels and murmuring mantras. Join the slow, glowing river of people.', img: 'boudhanath,kora,butter,lamp', mediaType: 'PHOTO', priceNpr: 0, language: 'Nepali', likes: 624, views: 9100 },
+  { id: 'bd3', creatorId: 'pema', destinationId: 'boudhanath', category: 'CULTURE', type: 'PREMIUM', title: 'Why Boudha is the heart of Tibetan Buddhism', teaser: 'After 1959, Boudha became home to thousands of Tibetans and dozens of monasteries. The mandala, the eyes, the symbolism — explained.', img: 'boudhanath,monastery,monk', mediaType: 'VIDEO', priceNpr: 220, language: 'Nepali', likes: 296, views: 4300, durationMin: 11 },
+  { id: 'bd4', creatorId: 'pema', destinationId: 'boudhanath', category: 'CULTURE', type: 'FREE', title: 'Always walk clockwise', teaser: 'Circle the stupa and spin prayer wheels with your right hand, clockwise. Dawn and dusk are most magical — and best for photos.', img: 'boudhanath,prayer,wheel', mediaType: 'TEXT', priceNpr: 0, language: 'Nepali', likes: 0, views: 1680, isTip: true, tipHelpful: 198 },
+
+  // ===== Swayambhunath =====
+  { id: 'sw1', creatorId: 'nilam', destinationId: 'swayambhunath', category: 'LEGEND', type: 'PREMIUM', title: 'Manjushri and the valley lake', teaser: 'The Kathmandu valley was once a vast lake with a lotus of light at its centre. The bodhisattva Manjushri cut the hills to drain it — and Swayambhu remained.', img: 'swayambhunath,stupa,kathmandu,valley', mediaType: 'AUDIO', priceNpr: 180, language: 'Nepali', likes: 420, views: 6200, durationMin: 9 },
+  { id: 'sw2', creatorId: 'nilam', destinationId: 'swayambhunath', category: 'CULTURE', type: 'FREE', title: 'The eyes of the Buddha', teaser: 'Those famous eyes on every side gaze in all directions; the curl between them is the number “one” in Nepali — unity, the one path.', img: 'swayambhunath,buddha,eyes', mediaType: 'PHOTO', priceNpr: 0, language: 'Nepali', likes: 560, views: 8700 },
+  { id: 'sw3', creatorId: 'nilam', destinationId: 'swayambhunath', category: 'HISTORY', type: 'FREE', title: '365 steps, sunrise & the monkeys', teaser: 'Climb the eastern stairway at dawn for soft light over the city — and mind the monkeys, they’ll grab food and shiny things.', img: 'swayambhunath,steps,monkey', mediaType: 'TEXT', priceNpr: 0, language: 'Nepali', likes: 0, views: 2240, isTip: true, tipHelpful: 231 },
+
+  // ===== Kathmandu Durbar Square =====
+  { id: 'ds1', creatorId: 'nilam', destinationId: 'durbar-square', category: 'HISTORY', type: 'PREMIUM', title: 'Hanuman Dhoka & the Malla kings', teaser: 'Palaces, courtyards and temples built over centuries by the Malla and Shah kings. Read the woodcarvings like a history book…', img: 'kathmandu,durbar,palace,carving', mediaType: 'VIDEO', priceNpr: 200, language: 'Nepali', likes: 318, views: 4900, durationMin: 12 },
+  { id: 'ds2', creatorId: 'nilam', destinationId: 'durbar-square', category: 'CULTURE', type: 'PREMIUM', title: 'The Kumari — Nepal’s living goddess', teaser: 'A young girl chosen as the living incarnation of the goddess Taleju, who appears at her carved window. Who she is, and how she lives…', img: 'kumari,kathmandu,goddess', mediaType: 'AUDIO', priceNpr: 220, language: 'Nepali', likes: 502, views: 7300, durationMin: 10 },
+  { id: 'ds3', creatorId: 'nilam', destinationId: 'durbar-square', category: 'FESTIVAL', type: 'FREE', title: 'Indra Jatra — chariots & masked dances', teaser: 'For eight days the square fills with chariot processions, lakhey masked dancers and the Kumari herself, pulled through the old city.', img: 'indra,jatra,kathmandu,mask', imgSrc: '/durbar-square.png', mediaType: 'PHOTO', priceNpr: 0, language: 'Nepali', likes: 396, views: 5800 },
+  { id: 'ds4', creatorId: 'nilam', destinationId: 'durbar-square', category: 'HISTORY', type: 'FREE', title: 'Tickets, dress & the rebuilt temples', teaser: 'Foreign visitors need an entry ticket; keep it for the day. Some temples are still being restored after the 2015 earthquake — give crews space.', img: 'kathmandu,durbar,square,temple', mediaType: 'TEXT', priceNpr: 0, language: 'Nepali', likes: 0, views: 1530, isTip: true, tipHelpful: 176 },
 ]
 
 export type Skill = {
@@ -174,6 +205,10 @@ export const SKILLS: Skill[] = [
   { id: 's7', creatorId: 'bikash', destinationId: 'pokhara', title: 'Sarangkot sunrise hike + tea', description: 'Pre-dawn walk up to the Sarangkot viewpoint for sunrise over the Annapurnas, then tea at a local home.', priceNpr: 1300, delivery: 'IN_PERSON', durationMin: 180, img: 'sarangkot,sunrise,hike', grad: 'linear-gradient(135deg,#2563eb,#0891b2)', rating: 4.8, reviews: 47, slotsToday: 6 },
   { id: 's8', creatorId: 'nilam', destinationId: 'kathmandu', title: 'Old Kathmandu food walk', description: '2.5 hr walk through the back lanes — six Newari tastings, the stories behind each, ending with juju dhau.', priceNpr: 1500, delivery: 'IN_PERSON', durationMin: 150, img: 'kathmandu,street,food', grad: 'linear-gradient(135deg,#16a34a,#2563eb)', rating: 4.9, reviews: 38, slotsToday: 5 },
   { id: 's9', creatorId: 'sita', destinationId: 'panauti', title: 'Write your name in Devanagari', description: '45-min online session — learn the script and write your own name beautifully, plus 10 travel phrases.', priceNpr: 600, delivery: 'DIGITAL', durationMin: 45, img: 'devanagari,writing,calligraphy', grad: 'linear-gradient(135deg,#2563eb,#0891b2)', rating: 4.9, reviews: 16, slotsToday: 10 },
+  { id: 's10', creatorId: 'ram', destinationId: 'pashupatinath', title: 'Pashupatinath heritage & ghats walk', description: '2 hr guided walk — the temples, the sadhus, the cremation ghats and the evening aarti, explained with care and respect.', priceNpr: 1200, delivery: 'IN_PERSON', durationMin: 120, img: 'pashupatinath,temple,guide', grad: 'linear-gradient(135deg,#7c3aed,#2563eb)', rating: 4.8, reviews: 52, slotsToday: 6 },
+  { id: 's11', creatorId: 'pema', destinationId: 'boudhanath', title: 'Boudha kora + monastery visit', description: 'Walk the kora with a local, spin the prayer wheels, then step inside a working monastery for the afternoon chants.', priceNpr: 1000, delivery: 'IN_PERSON', durationMin: 120, img: 'boudhanath,monastery,kora', grad: 'linear-gradient(135deg,#2563eb,#0891b2)', rating: 4.9, reviews: 44, slotsToday: 7 },
+  { id: 's12', creatorId: 'nilam', destinationId: 'swayambhunath', title: 'Swayambhu sunrise climb', description: 'Beat the crowds — climb the 365 steps at dawn for the city waking up below, with the legends told on the way up.', priceNpr: 1100, delivery: 'IN_PERSON', durationMin: 150, img: 'swayambhunath,sunrise,kathmandu', grad: 'linear-gradient(135deg,#16a34a,#2563eb)', rating: 4.8, reviews: 37, slotsToday: 5 },
+  { id: 's13', creatorId: 'nilam', destinationId: 'durbar-square', title: 'Durbar Square & Kumari house walk', description: '2 hr walk through Hanuman Dhoka, the temples and the Kumari Ghar — the art, the kings, and the living goddess.', priceNpr: 1300, delivery: 'IN_PERSON', durationMin: 120, img: 'kathmandu,durbar,square,walk', grad: 'linear-gradient(135deg,#4f46e5,#7c3aed)', rating: 4.9, reviews: 41, slotsToday: 6 },
 ]
 
 export type Project = {
@@ -200,6 +235,36 @@ export const REVIEWS: Review[] = [
   { id: 'r1', author: 'Hannah (Germany)', rating: 5, comment: 'Maya welcomed us like family. Best meal of our whole trip.', verified: true, daysAgo: 3 },
   { id: 'r2', author: 'Kenji (Japan)', rating: 5, comment: 'Cooking on the wood fire was unforgettable. Worth every rupee.', verified: true, daysAgo: 9 },
   { id: 'r3', author: 'Sofia (Spain)', rating: 4, comment: 'Lovely and authentic. A bit hard to find the house — follow her map pin!', verified: true, daysAgo: 21 },
+]
+
+// ---- Local Alerts (live conditions posted by locals) ----------------------
+export type AlertKind = 'road_blocked' | 'flood' | 'landslide' | 'strike' | 'closed' | 'cleared'
+export type AlertSeverity = 'caution' | 'serious' | 'blocked'
+
+export const ALERT_SEV: Record<AlertSeverity, { label: string; color: string; bg: string }> = {
+  caution: { label: 'Caution', color: '#b45309', bg: '#fef3c7' },
+  serious: { label: 'Serious', color: '#c2410c', bg: '#ffedd5' },
+  blocked: { label: 'Blocked', color: '#b91c1c', bg: '#fee2e2' },
+}
+export const ALERT_KINDS: { key: AlertKind; label: string; sev: AlertSeverity }[] = [
+  { key: 'road_blocked', label: 'Road blocked', sev: 'blocked' },
+  { key: 'flood', label: 'Flood', sev: 'serious' },
+  { key: 'landslide', label: 'Landslide', sev: 'serious' },
+  { key: 'strike', label: 'Strike / bandh', sev: 'caution' },
+  { key: 'closed', label: 'Site closed', sev: 'caution' },
+  { key: 'cleared', label: 'Cleared / safe again', sev: 'caution' },
+]
+export const alertKindOf = (k: AlertKind) => ALERT_KINDS.find(x => x.key === k)!
+
+export type Alert = {
+  id: string; placeId: string; kind: AlertKind; severity: AlertSeverity
+  body: string; byCreatorId: string; audioSrc?: string
+  minsAgo?: number; createdAt?: number; resolved?: boolean; helpful: number
+}
+export const SEED_ALERTS: Alert[] = [
+  { id: 'seed-al1', placeId: 'ghandruk', kind: 'landslide', severity: 'serious', byCreatorId: 'maya', minsAgo: 40, helpful: 31, body: 'Landslide on the road above Birethanti — vehicles stuck since morning. Walk up from Nayapul, or wait till afternoon when they clear it.' },
+  { id: 'seed-al2', placeId: 'kathmandu', kind: 'strike', severity: 'caution', byCreatorId: 'nilam', minsAgo: 95, helpful: 54, body: 'Transport bandh in the core city until about 2pm — most taxis are off the road. Walk between the squares or plan around it.' },
+  { id: 'seed-al3', placeId: 'pashupatinath', kind: 'road_blocked', severity: 'caution', byCreatorId: 'ram', minsAgo: 20, helpful: 18, body: 'Gaushala junction is dug up for pipe work — heavy traffic. Come early, or enter from the Jaya Bageshwari side.' },
 ]
 
 export const CURRENT_USER = {

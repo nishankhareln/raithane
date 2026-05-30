@@ -3,7 +3,7 @@ import { useState } from 'react'
 import dynamic from 'next/dynamic'
 import Link from 'next/link'
 import { LocateFixed, MapPin, Navigation } from 'lucide-react'
-import { DESTINATIONS, photo } from '@/lib/mock'
+import { DESTINATIONS, destImg } from '@/lib/mock'
 import { SectionHeader, Media } from '@/components/ui'
 
 const MapExplore = dynamic(() => import('@/components/MapExplore'), {
@@ -49,7 +49,7 @@ export default function Explore() {
         <div className="grid gap-3 sm:grid-cols-2">
           {ranked.map(d => (
             <Link key={d.id} href={`/destination/${d.slug}`} className="card hover-lift flex items-center gap-3 overflow-hidden rounded-2xl p-3">
-              <Media src={photo(d.img, d.id, 160, 160)} grad={d.grad} className="h-14 w-14 shrink-0 rounded-xl" overlay={false} />
+              <Media src={destImg(d, 160, 160)} grad={d.grad} className="h-14 w-14 shrink-0 rounded-xl" overlay={false} />
               <div className="flex-1">
                 <div className="text-sm font-black text-stone">{d.name}</div>
                 <div className="line-clamp-1 text-xs text-stone/55">{d.description}</div>

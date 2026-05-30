@@ -4,7 +4,7 @@ export default function Logo({ size = 30, withWord = true }: { size?: number; wi
     <span className="flex items-center gap-2">
       <span className="font-extrabold leading-none text-forest"
         style={{ fontSize: size, letterSpacing: '-0.01em', fontFamily: 'var(--font-deva), system-ui, sans-serif' }}>
-        रैथान
+        रैथाने
       </span>
       {withWord && (
         <span className="hidden leading-none sm:block">

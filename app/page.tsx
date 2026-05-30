@@ -1,14 +1,15 @@
 'use client'
 import { useState, useMemo } from 'react'
 import Link from 'next/link'
-import { Compass, Sparkles, ArrowRight, type LucideIcon } from 'lucide-react'
+import { Compass, Sparkles, ArrowRight, TriangleAlert, type LucideIcon } from 'lucide-react'
 import {
-  POSTS, SKILLS, VIBES, CATEGORIES, CREATORS, DESTINATIONS, destOf, photo, CURRENT_USER,
+  POSTS, SKILLS, VIBES, CATEGORIES, CREATORS, DESTINATIONS, destOf, photo, alertKindOf, CURRENT_USER,
   type CategoryKey,
 } from '@/lib/mock'
 import { FeedCard, SkillCard, TipCard } from '@/components/cards'
 import { Media, cx } from '@/components/ui'
 import { useCreations, toPost, toSkill } from '@/lib/userStore'
+import { useAlerts, isActive } from '@/lib/alertStore'
 
 type Item = { kind: 'post'; id: string } | { kind: 'skill'; id: string }
 
@@ -22,6 +23,7 @@ export default function HomeFeed() {
   const tips = allPosts.filter(p => p.isTip)
   const content = allPosts.filter(p => !p.isTip)
   const trip = destOf(CURRENT_USER.tripDestinationId)
+  const liveAlerts = useAlerts().filter(isActive)
   const postById = (id: string) => allPosts.find(p => p.id === id)!
   const skillById = (id: string) => allSkills.find(s => s.id === id)!
 
@@ -44,6 +46,21 @@ export default function HomeFeed() {
 
   return (
     <div className="space-y-7">
+      {/* GLOBAL live-alert strip */}
+      {liveAlerts.length > 0 && (
+        <Link href="/alerts" className="flex items-center gap-3 rounded-2xl border border-[#c2410c]/30 bg-[#fff4ec] px-4 py-3 hover:bg-[#ffe9db]">
+          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#c2410c] text-white"><TriangleAlert size={18} /></span>
+          <div className="min-w-0 flex-1">
+            <div className="text-sm font-black text-[#c2410c]">{liveAlerts.length} live local alert{liveAlerts.length > 1 ? 's' : ''}</div>
+            <div className="truncate text-xs text-stone/60">
+              {liveAlerts.slice(0, 2).map(a => `${alertKindOf(a.kind).label} · ${destOf(a.placeId).name}`).join('   •   ')}
+              {liveAlerts.length > 2 ? `   • +${liveAlerts.length - 2} more` : ''}
+            </div>
+          </div>
+          <span className="shrink-0 text-xs font-bold text-[#c2410c]">View →</span>
+        </Link>
+      )}
+
       {/* HERO — reference-style split: navy text panel + real image */}
       <section className="overflow-hidden rounded-3xl border border-sand">
         <div className="grid md:grid-cols-2">
@@ -71,7 +88,7 @@ export default function HomeFeed() {
               <Stat n="90%" l="goes to locals" />
             </div>
           </div>
-          <Media src={photo('nepal,himalaya,village', 7, 900, 900)} className="min-h-[220px] md:min-h-full" overlay={false} />
+          <Media src="/durbar-square.png" className="min-h-[220px] md:min-h-full" overlay={false} />
         </div>
       </section>
 

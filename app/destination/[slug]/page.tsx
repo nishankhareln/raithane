@@ -1,18 +1,34 @@
 'use client'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { useParams } from 'next/navigation'
 import { ArrowLeft, MapPin, LayoutGrid } from 'lucide-react'
-import { DESTINATIONS, POSTS, SKILLS, CATEGORIES, VIBES, photo, type CategoryKey } from '@/lib/mock'
+import { DESTINATIONS, POSTS, SKILLS, CATEGORIES, VIBES, destImg, alertKindOf, type CategoryKey } from '@/lib/mock'
 import { FeedCard, SkillCard, TipCard } from '@/components/cards'
 import { Pill, Media, cx } from '@/components/ui'
 import type { LucideIcon } from 'lucide-react'
+import { useAlerts, isActive } from '@/lib/alertStore'
+import AlertCard from '@/components/AlertCard'
+import ReportAlert from '@/components/ReportAlert'
 
 export default function DestinationHub() {
   const { slug } = useParams<{ slug: string }>()
   const d = DESTINATIONS.find(x => x.slug === slug)
   const [cat, setCat] = useState<CategoryKey | 'ALL'>('ALL')
+  const allAlerts = useAlerts()
+
+  useEffect(() => {
+    if (!d || typeof window === 'undefined' || !('Notification' in window)) return
+    const serious = allAlerts.find(a => isActive(a) && a.placeId === d.id && a.kind !== 'cleared')
+    if (!serious) return
+    const fire = () => { try { new Notification(`⚠ ${alertKindOf(serious.kind).label} near ${d.name}`, { body: serious.body }) } catch {} }
+    if (Notification.permission === 'granted') fire()
+    else if (Notification.permission !== 'denied') Notification.requestPermission().then(p => { if (p === 'granted') fire() })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [d?.id])
+
   if (!d) return <div className="py-20 text-center text-stone/50">Destination not found.</div>
+  const placeAlerts = allAlerts.filter(a => isActive(a) && a.placeId === d.id)
 
   const posts = POSTS.filter(p => p.destinationId === d.id && !p.isTip)
   const tips = POSTS.filter(p => p.destinationId === d.id && p.isTip)
@@ -24,7 +40,7 @@ export default function DestinationHub() {
       <Link href="/explore" className="inline-flex items-center gap-1.5 text-sm font-bold text-stone/55 hover:text-clay"><ArrowLeft size={16} /> All destinations</Link>
 
       <div className="relative overflow-hidden rounded-3xl text-white">
-        <Media src={photo(d.img, d.id, 1200, 520)} grad={d.grad} className="absolute inset-0 h-full w-full" />
+        <Media src={destImg(d, 1200, 520)} grad={d.grad} className="absolute inset-0 h-full w-full" />
         <div className="relative p-6 md:p-8" style={{ background: 'linear-gradient(90deg,rgba(11,42,74,.82),rgba(11,42,74,.25))' }}>
           <div className="flex items-center gap-1 text-sm text-white/85"><MapPin size={14} /> {d.district}</div>
           <h1 className="text-3xl font-black md:text-4xl">{d.name}</h1>
@@ -34,6 +50,17 @@ export default function DestinationHub() {
           </div>
         </div>
       </div>
+
+      {/* live local alerts for this place */}
+      <div className="flex items-center justify-between gap-2">
+        <h2 className="text-sm font-black" style={{ color: placeAlerts.length ? '#c2410c' : undefined }}>
+          {placeAlerts.length ? `⚠ ${placeAlerts.length} live alert${placeAlerts.length > 1 ? 's' : ''} here` : 'Conditions look clear'}
+        </h2>
+        <ReportAlert defaultPlaceId={d.id} className="!py-1.5 !text-xs" />
+      </div>
+      {placeAlerts.length > 0 && (
+        <div className="space-y-2">{placeAlerts.map(a => <AlertCard key={a.id} alert={a} showPlace={false} />)}</div>
+      )}
 
       {tips.length > 0 && (
         <section>

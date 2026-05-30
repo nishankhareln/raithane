@@ -7,6 +7,7 @@ import { POSTS, REVIEWS, creatorOf, destOf, catOf, fmtNpr, photo } from '@/lib/m
 import { Media, Avatar, Stars, Pill, MoneySplit, CreatorLine, cx } from '@/components/ui'
 import Checkout from '@/components/Checkout'
 import Phrasebook from '@/components/Phrasebook'
+import NarrateButton from '@/components/NarrateButton'
 import { useCreations, toPost } from '@/lib/userStore'
 
 export default function PostDetail() {
@@ -48,6 +49,9 @@ export default function PostDetail() {
           <span className="flex items-center gap-1"><Eye size={15} /> {post.views.toLocaleString()}</span>
         </div>
       </div>
+
+      {/* real-time AI narration (ElevenLabs) */}
+      <NarrateButton text={`${post.title}. ${post.teaser}${reveal && !post.phrases ? ' ' + fullerBody(post.title, c.name, d.name) : ''}`} />
 
       {/* free teaser — always visible */}
       <p className="text-[15px] leading-relaxed text-stone/80">{post.teaser}</p>

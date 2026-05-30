@@ -2,9 +2,10 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
-import { Home, Compass, Sparkles, Store, HeartHandshake, LayoutDashboard, Plus, Search } from 'lucide-react'
+import { Home, Compass, Sparkles, Store, HeartHandshake, LayoutDashboard, Plus, Search, Bell } from 'lucide-react'
 import { cx } from './ui'
 import Logo from './Logo'
+import { useAlerts, isActive } from '@/lib/alertStore'
 
 const NAV = [
   { href: '/', en: 'Home', ne: 'गृह', icon: Home },
@@ -26,6 +27,7 @@ export default function Shell({ children }: { children: React.ReactNode }) {
   const [q, setQ] = useState('')
   const active = (href: string) => href === '/' ? path === '/' : path.startsWith(href)
   const t = T[lang]
+  const alertCount = useAlerts().filter(isActive).length
 
   useEffect(() => {
     const saved = localStorage.getItem('raithane_lang') as 'en' | 'ne' | null
@@ -53,6 +55,12 @@ export default function Shell({ children }: { children: React.ReactNode }) {
         </form>
 
         <div className="flex items-center gap-2">
+          <Link href="/alerts" className="relative flex h-9 w-9 items-center justify-center rounded-full border border-sand bg-white text-stone/60 hover:text-clay" title="Live alerts">
+            <Bell size={17} />
+            {alertCount > 0 && (
+              <span className="absolute -right-1 -top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-clay px-1 text-[10px] font-black text-white">{alertCount}</span>
+            )}
+          </Link>
           <div className="flex overflow-hidden rounded-full border border-sand text-xs font-bold">
             {(['en', 'ne'] as const).map(l => (
               <button key={l} onClick={() => pickLang(l)}

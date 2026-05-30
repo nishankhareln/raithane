@@ -3,7 +3,7 @@ import { Suspense, useState } from 'react'
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
 import { ArrowRight } from 'lucide-react'
-import { VIBES, DESTINATIONS, CREATORS, POSTS, photo, type VibeKey } from '@/lib/mock'
+import { VIBES, DESTINATIONS, CREATORS, POSTS, photo, destImg, type VibeKey } from '@/lib/mock'
 import { Avatar, Stars, Media, cx } from '@/components/ui'
 import { FeedCard } from '@/components/cards'
 
@@ -49,7 +49,7 @@ function VibeInner() {
         <div className="grid gap-3 sm:grid-cols-2">
           {dests.map(d => (
             <Link key={d.id} href={`/destination/${d.slug}`} className="hover-lift relative block h-32 overflow-hidden rounded-2xl text-white">
-              <Media src={photo(d.img, d.id, 600, 360)} grad={d.grad} className="absolute inset-0 h-full w-full" />
+              <Media src={destImg(d, 600, 360)} grad={d.grad} className="absolute inset-0 h-full w-full" />
               <div className="absolute bottom-3 left-4 right-4">
                 <div className="text-lg font-black">{d.name}</div>
                 <div className="line-clamp-1 text-xs text-white/85">{d.description}</div>
