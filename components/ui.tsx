@@ -3,6 +3,7 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { Star, BadgeCheck } from 'lucide-react'
 import { fmtNpr, split, photo, type Creator } from '@/lib/mock'
+import { useLang } from '@/lib/i18n'
 
 export const cx = (...a: (string | false | undefined | null)[]) => a.filter(Boolean).join(' ')
 
@@ -93,11 +94,12 @@ export function MoneySplit({ amount, compact = false }: { amount: number; compac
 }
 
 export function SectionHeader({ title, sub, action }: { title: string; sub?: string; action?: React.ReactNode }) {
+  const { t } = useLang()
   return (
     <div className="mb-3 flex items-end justify-between gap-3">
       <div>
-        <h2 className="text-xl font-black tracking-tight text-stone">{title}</h2>
-        {sub && <p className="text-sm text-stone/55">{sub}</p>}
+        <h2 className="text-xl font-black tracking-tight text-stone">{t(title)}</h2>
+        {sub && <p className="text-sm text-stone/55">{t(sub)}</p>}
       </div>
       {action}
     </div>

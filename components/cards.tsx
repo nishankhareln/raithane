@@ -4,17 +4,21 @@ import Link from 'next/link'
 import { Lock, Heart, Eye, Play, Lightbulb, ThumbsUp, MapPin, CalendarCheck, Truck, Globe, Palette } from 'lucide-react'
 import { type Post, type Skill, catOf, creatorOf, destOf, fmtNpr, photo } from '@/lib/mock'
 import { Media, Avatar, Stars, Pill, MoneySplit, VerifiedBadge, cx } from './ui'
+import { useAuth } from './Auth'
+import { useLang } from '@/lib/i18n'
 
 export function FeedCard({ post }: { post: Post }) {
   const c = creatorOf(post.creatorId), d = destOf(post.destinationId), cat = catOf(post.category)
   const Cat = cat.icon
   const [liked, setLiked] = useState(false)
+  const { requireAuth } = useAuth()
+  const { t } = useLang()
   const premium = post.type === 'PREMIUM'
   return (
     <article className="card hover-lift rise flex flex-col overflow-hidden rounded-2xl">
       <Link href={`/post/${post.id}`}>
         <Media src={post.imgSrc || photo(post.img, post.id, 700, 460)} className="h-44 w-full">
-          <span className="absolute left-2.5 top-2.5"><Pill color={cat.color} soft={false}><Cat size={12} /> {cat.label}</Pill></span>
+          <span className="absolute left-2.5 top-2.5"><Pill color={cat.color} soft={false}><Cat size={12} /> {t(cat.label)}</Pill></span>
           {premium && (
             <span className="absolute right-2.5 top-2.5 flex items-center gap-1 rounded-full bg-navy/80 px-2 py-1 text-[11px] font-bold text-white backdrop-blur">
               <Lock size={11} /> Premium
@@ -38,7 +42,7 @@ export function FeedCard({ post }: { post: Post }) {
             <span className="flex items-center gap-1 text-xs font-bold text-stone">{c.name}{c.verified && <VerifiedBadge size={12} />}</span>
           </Link>
           <div className="flex items-center gap-2.5 text-[11px] text-stone/45">
-            <button onClick={() => setLiked(v => !v)} className={cx('flex items-center gap-1 font-semibold', liked && 'text-clay')}>
+            <button onClick={() => requireAuth('to like this', () => setLiked(v => !v))} className={cx('flex items-center gap-1 font-semibold', liked && 'text-clay')}>
               <Heart size={13} className={liked ? 'fill-clay text-clay pop' : ''} /> {post.likes + (liked ? 1 : 0)}
             </button>
             <span className="flex items-center gap-1"><Eye size={13} /> {post.views.toLocaleString()}</span>
@@ -46,9 +50,9 @@ export function FeedCard({ post }: { post: Post }) {
         </div>
 
         {premium && (
-          <div className="mt-2.5 flex items-center justify-between gap-2 border-t border-sand pt-2.5">
+          <div className="mt-2.5 border-t border-sand pt-2.5">
             <MoneySplit amount={post.priceNpr} compact />
-            <Link href={`/post/${post.id}`} className="shrink-0 rounded-full bg-clay px-3.5 py-1.5 text-xs font-bold text-white hover:bg-clay-dark">
+            <Link href={`/post/${post.id}`} className="mt-1.5 block w-full rounded-full bg-clay px-3 py-2 text-center text-xs font-bold text-white hover:bg-clay-dark">
               Unlock {fmtNpr(post.priceNpr)}
             </Link>
           </div>
@@ -101,6 +105,7 @@ export function SkillCard({ skill }: { skill: Skill }) {
 export function TipCard({ post }: { post: Post }) {
   const c = creatorOf(post.creatorId), d = destOf(post.destinationId)
   const [helped, setHelped] = useState(false)
+  const { requireAuth } = useAuth()
   return (
     <article className="rise flex flex-col rounded-2xl border-2 border-lake/25 bg-lake/5 p-3.5">
       <div className="flex items-center gap-2 text-lake">
@@ -110,7 +115,7 @@ export function TipCard({ post }: { post: Post }) {
       <p className="mt-1 text-[13px] text-stone/70">{post.teaser}</p>
       <div className="mt-2.5 flex items-center justify-between border-t border-lake/15 pt-2.5">
         <div className="flex items-center gap-1.5"><Avatar creator={c} size={24} /><span className="text-xs font-bold text-stone">{c.name}</span></div>
-        <button onClick={() => setHelped(v => !v)}
+        <button onClick={() => requireAuth('to mark this helpful', () => setHelped(v => !v))}
           className={cx('flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-bold', helped ? 'bg-lake text-white' : 'border border-lake/30 bg-white text-lake')}>
           <ThumbsUp size={13} className={helped ? 'fill-white' : ''} /> Helpful · {(post.tipHelpful ?? 0) + (helped ? 1 : 0)}
         </button>

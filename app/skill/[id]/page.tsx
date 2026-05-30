@@ -7,6 +7,7 @@ import { SKILLS, REVIEWS, creatorOf, destOf, fmtNpr, photo } from '@/lib/mock'
 import { Media, Stars, Pill, MoneySplit, CreatorLine, cx } from '@/components/ui'
 import { Palette } from 'lucide-react'
 import { useCreations, toSkill } from '@/lib/userStore'
+import { useAuth } from '@/components/Auth'
 import Checkout from '@/components/Checkout'
 
 const DELIVERY = {
@@ -18,6 +19,7 @@ const DELIVERY = {
 export default function SkillDetail() {
   const { id } = useParams<{ id: string }>()
   const creations = useCreations()
+  const { requireAuth } = useAuth()
   const skill = [...creations.filter(c => c.kind === 'skill').map(toSkill), ...SKILLS].find(s => s.id === id)
   const [checkout, setCheckout] = useState(false)
   const [booked, setBooked] = useState(false)
@@ -64,7 +66,7 @@ export default function SkillDetail() {
             <div className="text-2xl font-black text-forest">{fmtNpr(skill.priceNpr)}</div>
             <MoneySplit amount={skill.priceNpr} compact />
           </div>
-          <button onClick={() => setCheckout(true)}
+          <button onClick={() => requireAuth('to book this', () => setCheckout(true))}
             className="flex items-center gap-2 rounded-full bg-forest px-6 py-3 text-base font-black text-white hover:brightness-95">
             <ShieldCheck size={18} /> Book now
           </button>

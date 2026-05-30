@@ -1,11 +1,13 @@
 'use client'
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { Home, Compass, Sparkles, Store, HeartHandshake, LayoutDashboard, Plus, Search, Bell } from 'lucide-react'
 import { cx } from './ui'
 import Logo from './Logo'
 import { useAlerts, isActive } from '@/lib/alertStore'
+import { useAuth } from './Auth'
+import { useLang } from '@/lib/i18n'
 
 const NAV = [
   { href: '/', en: 'Home', ne: 'गृह', icon: Home },
@@ -23,17 +25,12 @@ const T = {
 export default function Shell({ children }: { children: React.ReactNode }) {
   const path = usePathname()
   const router = useRouter()
-  const [lang, setLang] = useState<'en' | 'ne'>('en')
+  const { lang, setLang } = useLang()
   const [q, setQ] = useState('')
   const active = (href: string) => href === '/' ? path === '/' : path.startsWith(href)
   const t = T[lang]
   const alertCount = useAlerts().filter(isActive).length
-
-  useEffect(() => {
-    const saved = localStorage.getItem('raithane_lang') as 'en' | 'ne' | null
-    if (saved) setLang(saved)
-  }, [])
-  const pickLang = (l: 'en' | 'ne') => { setLang(l); try { localStorage.setItem('raithane_lang', l) } catch {} }
+  const { user, openAuth, logout } = useAuth()
 
   const submitSearch = (e: React.FormEvent) => {
     e.preventDefault()
@@ -63,12 +60,20 @@ export default function Shell({ children }: { children: React.ReactNode }) {
           </Link>
           <div className="flex overflow-hidden rounded-full border border-sand text-xs font-bold">
             {(['en', 'ne'] as const).map(l => (
-              <button key={l} onClick={() => pickLang(l)}
+              <button key={l} onClick={() => setLang(l)}
                 className={cx('px-2.5 py-1', lang === l ? 'bg-stone text-white' : 'bg-white text-stone/50')}>
                 {l === 'en' ? 'EN' : 'ने'}
               </button>
             ))}
           </div>
+          {user ? (
+            <div className="flex items-center gap-1.5">
+              <span className="hidden max-w-20 truncate text-xs font-bold text-stone sm:block">{user.name.split(' ')[0]}</span>
+              <button onClick={logout} title="Log out" className="rounded-full border border-sand bg-white px-2.5 py-1.5 text-xs font-bold text-stone/55 hover:text-clay">Logout</button>
+            </div>
+          ) : (
+            <button onClick={() => openAuth()} className="rounded-full border border-clay bg-white px-3 py-1.5 text-sm font-bold text-clay hover:bg-clay hover:text-white">Sign in</button>
+          )}
           <Link href="/upload" className="flex items-center gap-1.5 rounded-full bg-clay px-3.5 py-2 text-sm font-bold text-white shadow hover:bg-clay-dark">
             <Plus size={16} /> <span className="hidden sm:inline">{t.create}</span>
           </Link>

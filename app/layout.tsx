@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Geist, Baloo_2 } from "next/font/google";
 import "./globals.css";
 import Shell from "@/components/Shell";
+import { AuthProvider } from "@/components/Auth";
+import { LangProvider } from "@/lib/i18n";
 
 const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
 const deva = Baloo_2({ variable: "--font-deva", subsets: ["latin", "devanagari"], weight: ["700", "800"] });
@@ -16,7 +18,11 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   return (
     <html lang="en" className={`${geistSans.variable} ${deva.variable} h-full antialiased`}>
       <body className="min-h-full">
-        <Shell>{children}</Shell>
+        <AuthProvider>
+          <LangProvider>
+            <Shell>{children}</Shell>
+          </LangProvider>
+        </AuthProvider>
       </body>
     </html>
   );

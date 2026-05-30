@@ -5,6 +5,8 @@ import { useParams } from 'next/navigation'
 import { ArrowLeft, BadgeCheck, Users, HeartHandshake, Trophy, Heart } from 'lucide-react'
 import { CREATORS, POSTS, SKILLS, SUPPORTERS, destOf, fmtNpr } from '@/lib/mock'
 import { useCreations, toPost, toSkill } from '@/lib/userStore'
+import { useAuth } from '@/components/Auth'
+import { useFollows, toggleFollow } from '@/lib/social'
 import { Avatar, Stars, Pill, cx } from '@/components/ui'
 import { FeedCard, SkillCard } from '@/components/cards'
 import Checkout from '@/components/Checkout'
@@ -15,11 +17,13 @@ export default function CreatorProfile() {
   const { id } = useParams<{ id: string }>()
   const c = CREATORS.find(x => x.id === id)
   const [tab, setTab] = useState<'posts' | 'skills'>('posts')
-  const [following, setFollowing] = useState(false)
   const [tip, setTip] = useState(0)
   const [checkout, setCheckout] = useState(false)
   const [supporters, setSupporters] = useState(SUPPORTERS)
   const creations = useCreations()
+  const { user, requireAuth } = useAuth()
+  const follows = useFollows(user?.id)
+  const following = !!c && follows.includes(c.id)
 
   if (!c) return <div className="py-20 text-center text-stone/50">Creator not found.</div>
   const d = destOf(c.destinationId)
@@ -46,7 +50,7 @@ export default function CreatorProfile() {
         </div>
         <p className="relative mt-3 text-sm text-white/90">{c.bio}</p>
         <div className="relative mt-4 flex gap-2">
-          <button onClick={() => setFollowing(v => !v)}
+          <button onClick={() => requireAuth('to follow', () => user && toggleFollow(user.id, c.id))}
             className={cx('flex items-center gap-1.5 rounded-full px-4 py-2 text-sm font-bold', following ? 'bg-white/20 text-white' : 'bg-white text-stone')}>
             <Heart size={15} className={following ? 'fill-white' : ''} /> {following ? 'Following' : 'Follow'}
           </button>

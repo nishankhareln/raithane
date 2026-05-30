@@ -9,20 +9,32 @@ import Checkout from '@/components/Checkout'
 import Phrasebook from '@/components/Phrasebook'
 import NarrateButton from '@/components/NarrateButton'
 import { useCreations, toPost } from '@/lib/userStore'
+import { useAuth } from '@/components/Auth'
+import { useComments, addComment } from '@/lib/social'
 
 export default function PostDetail() {
   const { id } = useParams<{ id: string }>()
   const creations = useCreations()
-  const post = [...creations.filter(c => c.kind === 'post').map(toPost), ...POSTS].find(p => p.id === id)
+  const { user, requireAuth } = useAuth()
+  const comments = useComments(id)
   const [unlocked, setUnlocked] = useState(false)
   const [checkout, setCheckout] = useState(false)
+  const [draft, setDraft] = useState('')
+  const post = [...creations.filter(c => c.kind === 'post').map(toPost), ...POSTS].find(p => p.id === id)
+  const mine = creations.some(x => x.id === id)
 
   if (!post) return <div className="py-20 text-center text-stone/50">Post not found. <Link href="/" className="font-bold text-clay">Go home</Link></div>
 
   const c = creatorOf(post.creatorId), d = destOf(post.destinationId), cat = catOf(post.category)
   const Cat = cat.icon
   const premium = post.type === 'PREMIUM'
-  const reveal = !premium || unlocked
+  const reveal = !premium || unlocked || mine
+
+  const postComment = () => requireAuth('to comment', () => {
+    if (!draft.trim() || !user) return
+    addComment(id, { id: 'c' + Date.now(), userId: user.id, author: user.name, text: draft.trim(), createdAt: Date.now() })
+    setDraft('')
+  })
 
   return (
     <div className="mx-auto max-w-2xl space-y-5">
@@ -75,7 +87,7 @@ export default function PostDetail() {
             <div className="text-xs text-stone/55">Support {c.name} directly — they keep 90%.</div>
           </div>
           <div className="w-full max-w-xs"><MoneySplit amount={post.priceNpr} /></div>
-          <button onClick={() => setCheckout(true)} className="flex items-center gap-2 rounded-full bg-clay px-5 py-2.5 text-sm font-black text-white hover:bg-clay-dark">
+          <button onClick={() => requireAuth('to unlock this', () => setCheckout(true))} className="flex items-center gap-2 rounded-full bg-clay px-5 py-2.5 text-sm font-black text-white hover:bg-clay-dark">
             <ShieldCheck size={16} /> Unlock for {fmtNpr(post.priceNpr)}
           </button>
         </div>
@@ -102,7 +114,7 @@ export default function PostDetail() {
               <div className="text-xs text-stone/55">Support {c.name} directly — they keep 90%.</div>
             </div>
             <div className="w-full max-w-xs"><MoneySplit amount={post.priceNpr} /></div>
-            <button onClick={() => setCheckout(true)}
+            <button onClick={() => requireAuth('to unlock this', () => setCheckout(true))}
               className="flex items-center gap-2 rounded-full bg-clay px-5 py-2.5 text-sm font-black text-white hover:bg-clay-dark">
               <ShieldCheck size={16} /> Unlock for {fmtNpr(post.priceNpr)}
             </button>
@@ -129,6 +141,26 @@ export default function PostDetail() {
           ))}
         </div>
         <p className="mt-2 text-xs text-stone/45">Only people who unlocked this can review it — that’s why every star is real.</p>
+      </section>
+
+      {/* comments */}
+      <section className="border-t border-sand pt-4">
+        <h2 className="mb-2 text-lg font-black text-stone">Comments ({comments.length})</h2>
+        <div className="flex items-start gap-2">
+          <textarea value={draft} onChange={e => setDraft(e.target.value)} rows={2}
+            placeholder={user ? 'Add a comment…' : 'Sign in to comment…'}
+            className="flex-1 rounded-xl border border-sand bg-white p-2.5 text-sm outline-none" />
+          <button onClick={postComment} className="shrink-0 rounded-full bg-clay px-4 py-2 text-sm font-bold text-white hover:bg-clay-dark">Post</button>
+        </div>
+        <div className="mt-3 space-y-2">
+          {comments.length === 0 && <p className="text-sm text-stone/45">Be the first to comment.</p>}
+          {comments.map(cm => (
+            <div key={cm.id} className="rounded-xl border border-sand bg-white p-3">
+              <div className="text-sm font-bold text-stone">{cm.author}</div>
+              <p className="mt-0.5 text-sm text-stone/70">{cm.text}</p>
+            </div>
+          ))}
+        </div>
       </section>
 
       <Checkout open={checkout} onClose={() => setCheckout(false)} onDone={() => setUnlocked(true)}

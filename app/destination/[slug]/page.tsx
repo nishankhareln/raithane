@@ -10,11 +10,13 @@ import type { LucideIcon } from 'lucide-react'
 import { useAlerts, isActive } from '@/lib/alertStore'
 import AlertCard from '@/components/AlertCard'
 import ReportAlert from '@/components/ReportAlert'
+import { useLang } from '@/lib/i18n'
 
 export default function DestinationHub() {
   const { slug } = useParams<{ slug: string }>()
   const d = DESTINATIONS.find(x => x.slug === slug)
   const [cat, setCat] = useState<CategoryKey | 'ALL'>('ALL')
+  const { t } = useLang()
   const allAlerts = useAlerts()
 
   useEffect(() => {
@@ -43,10 +45,10 @@ export default function DestinationHub() {
         <Media src={destImg(d, 1200, 520)} grad={d.grad} className="absolute inset-0 h-full w-full" />
         <div className="relative p-6 md:p-8" style={{ background: 'linear-gradient(90deg,rgba(11,42,74,.82),rgba(11,42,74,.25))' }}>
           <div className="flex items-center gap-1 text-sm text-white/85"><MapPin size={14} /> {d.district}</div>
-          <h1 className="text-3xl font-black md:text-4xl">{d.name}</h1>
-          <p className="mt-2 max-w-lg text-sm text-white/90">{d.description}</p>
+          <h1 className="text-3xl font-black md:text-4xl">{t(d.name)}</h1>
+          <p className="mt-2 max-w-lg text-sm text-white/90">{t(d.description)}</p>
           <div className="mt-3 flex flex-wrap gap-1.5">
-            {d.vibes.map(vk => { const v = VIBES.find(x => x.key === vk)!; const VI = v.icon; return <span key={vk} className="inline-flex items-center gap-1 rounded-full bg-white/20 px-2.5 py-0.5 text-xs font-semibold backdrop-blur"><VI size={12} /> {v.label}</span> })}
+            {d.vibes.map(vk => { const v = VIBES.find(x => x.key === vk)!; const VI = v.icon; return <span key={vk} className="inline-flex items-center gap-1 rounded-full bg-white/20 px-2.5 py-0.5 text-xs font-semibold backdrop-blur"><VI size={12} /> {t(v.label)}</span> })}
           </div>
         </div>
       </div>
@@ -64,21 +66,21 @@ export default function DestinationHub() {
 
       {tips.length > 0 && (
         <section>
-          <h2 className="mb-2 text-base font-black text-stone">💡 Local know-how</h2>
-          <div className="grid gap-3 sm:grid-cols-2">{tips.map(t => <TipCard key={t.id} post={t} />)}</div>
+          <h2 className="mb-2 text-base font-black text-stone">💡 {t('Local know-how')}</h2>
+          <div className="grid gap-3 sm:grid-cols-2">{tips.map(tp => <TipCard key={tp.id} post={tp} />)}</div>
         </section>
       )}
 
       <div className="no-scrollbar -mx-1 flex gap-2 overflow-x-auto px-1">
-        <Tab on={cat === 'ALL'} onClick={() => setCat('ALL')} label="All" icon={LayoutGrid} />
-        {CATEGORIES.map(c => <Tab key={c.key} on={cat === c.key} onClick={() => setCat(c.key)} label={c.label} icon={c.icon} color={c.color} />)}
+        <Tab on={cat === 'ALL'} onClick={() => setCat('ALL')} label={t('All')} icon={LayoutGrid} />
+        {CATEGORIES.map(c => <Tab key={c.key} on={cat === c.key} onClick={() => setCat(c.key)} label={t(c.label)} icon={c.icon} color={c.color} />)}
       </div>
 
       {cat === 'SKILL' || cat === 'ALL' ? (
         <>
           {cat === 'ALL' && shown.length > 0 && <div className="grid gap-4 sm:grid-cols-2">{shown.map(p => <FeedCard key={p.id} post={p} />)}</div>}
           <section>
-            <h2 className="mb-2 mt-2 text-base font-black text-stone">🧑‍🎨 Skills here</h2>
+            <h2 className="mb-2 mt-2 text-base font-black text-stone">🧑‍🎨 {t('Skills here')}</h2>
             <div className="grid gap-4 sm:grid-cols-2">{skills.map(s => <SkillCard key={s.id} skill={s} />)}</div>
           </section>
         </>

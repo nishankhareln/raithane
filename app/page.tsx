@@ -10,11 +10,13 @@ import { FeedCard, SkillCard, TipCard } from '@/components/cards'
 import { Media, cx } from '@/components/ui'
 import { useCreations, toPost, toSkill } from '@/lib/userStore'
 import { useAlerts, isActive } from '@/lib/alertStore'
+import { useLang } from '@/lib/i18n'
 
 type Item = { kind: 'post'; id: string } | { kind: 'skill'; id: string }
 
 export default function HomeFeed() {
   const [cat, setCat] = useState<CategoryKey | 'ALL'>('ALL')
+  const { t } = useLang()
   const creations = useCreations()
   const userPosts = creations.filter(c => c.kind === 'post').map(toPost)
   const userSkills = creations.filter(c => c.kind === 'skill').map(toSkill)
@@ -66,26 +68,26 @@ export default function HomeFeed() {
         <div className="grid md:grid-cols-2">
           <div className="p-6 text-white md:p-10" style={{ background: 'linear-gradient(135deg,#16a34a 0%,#0b2a4a 80%)' }}>
             <span className="inline-flex items-center gap-1.5 rounded-full bg-white/15 px-3 py-1 text-xs font-bold backdrop-blur">
-              <Sparkles size={13} /> Nepal, through the people who live it
+              <Sparkles size={13} /> {t('Nepal, through the people who live it')}
             </span>
             <h1 className="mt-3 text-3xl font-black leading-tight md:text-[2.7rem]">
-              Discover Nepal.<br /><span className="text-gold">Pay the locals</span> who make it real.
+              {t('Discover Nepal.')}<br /><span className="text-gold">{t('Pay the locals')}</span> {t('who make it real.')}
             </h1>
             <p className="mt-3 text-sm text-white/80 md:text-base">
-              Stories, food, festivals and skills shared by the people who live them — unlock culture and book real experiences, and <b className="text-white">90% goes straight to the local</b>.
+              {t('Stories, food, festivals and skills shared by the people who live them — unlock culture and book real experiences, and ')}<b className="text-white">{t('90% goes straight to the local')}</b>.
             </p>
             <div className="mt-5 flex flex-wrap gap-2.5">
               <Link href="/vibe" className="flex items-center gap-2 rounded-full bg-gold px-4 py-2.5 text-sm font-bold text-navy shadow transition hover:scale-[1.03]">
-                <Sparkles size={16} /> Find your vibe
+                <Sparkles size={16} /> {t('Find your vibe')}
               </Link>
               <Link href="/explore" className="flex items-center gap-2 rounded-full bg-white/15 px-4 py-2.5 text-sm font-bold text-white backdrop-blur hover:bg-white/25">
-                <Compass size={16} /> Explore the map
+                <Compass size={16} /> {t('Explore the map')}
               </Link>
             </div>
             <div className="mt-6 flex flex-wrap gap-6 text-sm">
-              <Stat n={`${CREATORS.length}+`} l="verified creators" />
-              <Stat n={`${DESTINATIONS.length}`} l="destinations" />
-              <Stat n="90%" l="goes to locals" />
+              <Stat n={`${CREATORS.length}+`} l={t('verified creators')} />
+              <Stat n={`${DESTINATIONS.length}`} l={t('destinations')} />
+              <Stat n="90%" l={t('goes to locals')} />
             </div>
           </div>
           <Media src="/durbar-square.png" className="min-h-[220px] md:min-h-full" overlay={false} />
@@ -105,15 +107,15 @@ export default function HomeFeed() {
       {/* DISCOVER BY VIBE — real photos */}
       <section>
         <div className="mb-2.5 flex items-center justify-between">
-          <h2 className="text-lg font-black text-stone">Discover by vibe</h2>
-          <Link href="/vibe" className="text-xs font-bold text-clay">See all →</Link>
+          <h2 className="text-lg font-black text-stone">{t('Discover by vibe')}</h2>
+          <Link href="/vibe" className="text-xs font-bold text-clay">{t('See all →')}</Link>
         </div>
         <div className="no-scrollbar -mx-1 flex gap-2.5 overflow-x-auto px-1 pb-1">
           {VIBES.map(v => (
             <Link key={v.key} href={`/vibe?v=${v.key}`} className="hover-lift shrink-0">
               <Media src={photo(v.img, v.key, 320, 220)} grad={v.grad} className="h-24 w-36 rounded-2xl">
                 <span className="absolute left-3 top-3 text-white"><v.icon size={20} /></span>
-                <span className="absolute bottom-2.5 left-3 text-sm font-black text-white">{v.label}</span>
+                <span className="absolute bottom-2.5 left-3 text-sm font-black text-white">{t(v.label)}</span>
               </Media>
             </Link>
           ))}
@@ -123,16 +125,16 @@ export default function HomeFeed() {
       {/* LOCAL KNOW-HOW strip */}
       {tips.length > 0 && (
         <section>
-          <h2 className="mb-2.5 text-lg font-black text-stone">Local know-how</h2>
-          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">{tips.map(t => <TipCard key={t.id} post={t} />)}</div>
+          <h2 className="mb-2.5 text-lg font-black text-stone">{t('Local know-how')}</h2>
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">{tips.map(tp => <TipCard key={tp.id} post={tp} />)}</div>
         </section>
       )}
 
       {/* CATEGORY TABS + FEED */}
       <section>
         <div className="no-scrollbar -mx-1 mb-4 flex gap-2 overflow-x-auto px-1">
-          <Tab on={cat === 'ALL'} onClick={() => setCat('ALL')} label="For you" icon={Sparkles} />
-          {CATEGORIES.map(c => <Tab key={c.key} on={cat === c.key} onClick={() => setCat(c.key)} label={c.label} icon={c.icon} color={c.color} />)}
+          <Tab on={cat === 'ALL'} onClick={() => setCat('ALL')} label={t('For you')} icon={Sparkles} />
+          {CATEGORIES.map(c => <Tab key={c.key} on={cat === c.key} onClick={() => setCat(c.key)} label={t(c.label)} icon={c.icon} color={c.color} />)}
         </div>
         <div className="grid gap-4 sm:grid-cols-2">
           {items.map(it => it.kind === 'post'

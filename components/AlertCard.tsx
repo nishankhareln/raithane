@@ -7,6 +7,7 @@ import { markHelpful, resolveAlert, timeAgo } from '@/lib/alertStore'
 import { Avatar, cx } from './ui'
 import NarrateButton from './NarrateButton'
 import RecordedAudio from './RecordedAudio'
+import { useAuth } from './Auth'
 
 const KIND_ICON: Record<AlertKind, LucideIcon> = {
   road_blocked: Construction, flood: Waves, landslide: Mountain, strike: Megaphone, closed: Lock, cleared: CircleCheck,
@@ -21,6 +22,7 @@ export default function AlertCard({ alert, showPlace = true }: { alert: Alert; s
   const sev = cleared ? { label: 'Cleared', color: '#15803d', bg: '#dcfce7' } : ALERT_SEV[alert.severity]
   const [helped, setHelped] = useState(false)
   const [done, setDone] = useState(alert.resolved)
+  const { requireAuth } = useAuth()
 
   return (
     <div className="overflow-hidden rounded-2xl border" style={{ borderColor: sev.color + '55', background: sev.bg }}>
@@ -50,7 +52,7 @@ export default function AlertCard({ alert, showPlace = true }: { alert: Alert; s
               ? <RecordedAudio src={alert.audioSrc} secs={alert.audioSecs} className="max-w-[260px]" />
               : <NarrateButton text={`${k.label} near ${place?.name}. ${alert.body}`} label="Hear the alert" className="!px-3 !py-1.5 !text-xs" />}
 
-            <button type="button" disabled={helped} onClick={() => { markHelpful(alert.id); setHelped(true) }}
+            <button type="button" disabled={helped} onClick={() => requireAuth('to mark helpful', () => { markHelpful(alert.id); setHelped(true) })}
               className={cx('inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-bold',
                 helped ? 'bg-forest text-white' : 'border bg-white')}
               style={helped ? undefined : { borderColor: sev.color + '55', color: sev.color }}>
