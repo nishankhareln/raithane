@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { useParams } from 'next/navigation'
-import { ArrowLeft, MapPin, LayoutGrid } from 'lucide-react'
+import { ArrowLeft, MapPin, LayoutGrid, Lightbulb, Store, TriangleAlert } from 'lucide-react'
 import { DESTINATIONS, POSTS, SKILLS, CATEGORIES, VIBES, destImg, alertKindOf, type CategoryKey } from '@/lib/mock'
 import { FeedCard, SkillCard, TipCard } from '@/components/cards'
 import { Pill, Media, cx } from '@/components/ui'
@@ -55,8 +55,8 @@ export default function DestinationHub() {
 
       {/* live local alerts for this place */}
       <div className="flex items-center justify-between gap-2">
-        <h2 className="text-sm font-black" style={{ color: placeAlerts.length ? '#c2410c' : undefined }}>
-          {placeAlerts.length ? `⚠ ${placeAlerts.length} live alert${placeAlerts.length > 1 ? 's' : ''} here` : 'Conditions look clear'}
+        <h2 className="flex items-center gap-1.5 text-sm font-black" style={{ color: placeAlerts.length ? '#c2410c' : undefined }}>
+          {placeAlerts.length ? <><TriangleAlert size={14} /> {placeAlerts.length} live alert{placeAlerts.length > 1 ? 's' : ''} here</> : 'Conditions look clear'}
         </h2>
         <ReportAlert defaultPlaceId={d.id} className="!py-1.5 !text-xs" />
       </div>
@@ -66,7 +66,7 @@ export default function DestinationHub() {
 
       {tips.length > 0 && (
         <section>
-          <h2 className="mb-2 text-base font-black text-stone">💡 {t('Local know-how')}</h2>
+          <h2 className="mb-2 flex items-center gap-1.5 text-base font-black text-stone"><Lightbulb size={16} className="text-lake" /> {t('Local know-how')}</h2>
           <div className="grid gap-3 sm:grid-cols-2">{tips.map(tp => <TipCard key={tp.id} post={tp} />)}</div>
         </section>
       )}
@@ -80,7 +80,7 @@ export default function DestinationHub() {
         <>
           {cat === 'ALL' && shown.length > 0 && <div className="grid gap-4 sm:grid-cols-2">{shown.map(p => <FeedCard key={p.id} post={p} />)}</div>}
           <section>
-            <h2 className="mb-2 mt-2 text-base font-black text-stone">🧑‍🎨 {t('Skills here')}</h2>
+            <h2 className="mb-2 mt-2 flex items-center gap-1.5 text-base font-black text-stone"><Store size={16} className="text-forest" /> {t('Skills here')}</h2>
             <div className="grid gap-4 sm:grid-cols-2">{skills.map(s => <SkillCard key={s.id} skill={s} />)}</div>
           </section>
         </>

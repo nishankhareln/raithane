@@ -17,7 +17,7 @@ export default function AlertsPage() {
 
       {active.length === 0 ? (
         <div className="rounded-2xl border border-sand bg-white p-12 text-center text-stone/50">
-          No active alerts right now — all clear ✅
+          No active alerts right now — all clear.
         </div>
       ) : (
         <div className="space-y-3">{active.map(a => <AlertCard key={a.id} alert={a} />)}</div>

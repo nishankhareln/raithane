@@ -2,7 +2,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { useParams } from 'next/navigation'
-import { ArrowLeft, Lock, Eye, Heart, Play, BadgeCheck, ShieldCheck } from 'lucide-react'
+import { ArrowLeft, Lock, Eye, Heart, Play, BadgeCheck, ShieldCheck, MapPin } from 'lucide-react'
 import { POSTS, REVIEWS, creatorOf, destOf, catOf, fmtNpr, photo } from '@/lib/mock'
 import { Media, Avatar, Stars, Pill, MoneySplit, CreatorLine, cx } from '@/components/ui'
 import Checkout from '@/components/Checkout'
@@ -50,7 +50,7 @@ export default function PostDetail() {
       </Media>
 
       <div>
-        <Link href={`/destination/${d.slug}`} className="text-sm font-bold text-stone/50">📍 {d.name}, {d.district}</Link>
+        <Link href={`/destination/${d.slug}`} className="inline-flex items-center gap-1 text-sm font-bold text-stone/50"><MapPin size={13} /> {d.name}, {d.district}</Link>
         <h1 className="mt-1 text-2xl font-black text-stone md:text-3xl">{post.title}</h1>
       </div>
 

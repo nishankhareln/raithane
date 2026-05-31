@@ -45,7 +45,7 @@ export default function Explore() {
       <MapExplore userPos={pos} />
 
       <section>
-        <h2 className="mb-2.5 text-lg font-black text-stone">{pos ? '📍 Nearest to you' : 'Destinations'}</h2>
+        <h2 className="mb-2.5 flex items-center gap-1.5 text-lg font-black text-stone">{pos ? <><MapPin size={16} /> Nearest to you</> : 'Destinations'}</h2>
         <div className="grid gap-3 sm:grid-cols-2">
           {ranked.map(d => (
             <Link key={d.id} href={`/destination/${d.slug}`} className="card hover-lift flex items-center gap-3 overflow-hidden rounded-2xl p-3">

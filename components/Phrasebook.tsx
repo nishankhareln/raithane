@@ -1,5 +1,5 @@
 'use client'
-import { Volume2, Info } from 'lucide-react'
+import { Volume2, Info, Mic } from 'lucide-react'
 import type { Phrase } from '@/lib/mock'
 
 function speak(text: string, lang = 'ne-NP') {
@@ -45,9 +45,9 @@ export default function Phrasebook({ phrases, origLang = 'Nepali', sampleNote, l
       )}
 
       {origLang !== 'Nepali' && origLang !== 'English' && (
-        <div className="text-[11px] text-stone/45">
-          🎙️ Recorded in <b>{origLang}</b> by an elder · translated to Nepali by a paid local youth · English added after.
-          The original voice is always preserved.
+        <div className="flex items-start gap-1.5 text-[11px] text-stone/45">
+          <Mic size={12} className="mt-0.5 shrink-0" />
+          <span>Recorded in <b>{origLang}</b> by an elder · translated to Nepali by a paid local youth · English added after. The original voice is always preserved.</span>
         </div>
       )}
     </div>

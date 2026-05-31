@@ -2,7 +2,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { useParams } from 'next/navigation'
-import { ArrowLeft, BadgeCheck, Users, HeartHandshake, Trophy, Heart } from 'lucide-react'
+import { ArrowLeft, BadgeCheck, Users, HeartHandshake, Trophy, Heart, MapPin } from 'lucide-react'
 import { CREATORS, POSTS, SKILLS, SUPPORTERS, destOf, fmtNpr, type Creator } from '@/lib/mock'
 import { useCreations, toPost, toSkill } from '@/lib/userStore'
 import { useAuth } from '@/components/Auth'
@@ -53,7 +53,7 @@ export default function CreatorProfile() {
           <Avatar creator={c} size={80} />
           <div className="flex-1">
             <div className="flex items-center gap-1.5 text-2xl font-black">{c.name}{c.verified && <BadgeCheck size={20} />}</div>
-            <div className="text-sm text-white/85">📍 {d.name}, {d.district}</div>
+            <div className="flex items-center gap-1 text-sm text-white/85"><MapPin size={13} /> {d.name}, {d.district}</div>
             <div className="mt-1.5 flex flex-wrap gap-3 text-sm">
               <span className="flex items-center gap-1 font-bold"><span className="rounded bg-white/20 px-1.5 py-0.5">★ {c.rating}</span> {c.reviews} reviews</span>
               <span className="flex items-center gap-1"><Users size={14} /> {c.followers.toLocaleString()}</span>
@@ -95,7 +95,7 @@ export default function CreatorProfile() {
           <div className="card divide-y divide-sand rounded-2xl">
             {supporters.slice(0, 5).map((s, i) => (
               <div key={i} className="flex items-center gap-3 px-4 py-2.5">
-                <span className="w-5 text-center font-black text-stone/40">{['🥇', '🥈', '🥉'][i] || i + 1}</span>
+                <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-[11px] font-black text-white" style={{ background: ['#d4a017', '#9ca3af', '#b45309'][i] || '#cbd5e1' }}>{i + 1}</span>
                 <div className="flex-1">
                   <div className="text-sm font-bold text-stone">{s.anon ? 'Anonymous Friend' : s.name}</div>
                   <div className="text-[11px] text-stone/45">{s.country}</div>

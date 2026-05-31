@@ -2,7 +2,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { useParams } from 'next/navigation'
-import { ArrowLeft, CalendarCheck, Truck, Globe, Clock, Users, BadgeCheck, Star, ShieldCheck } from 'lucide-react'
+import { ArrowLeft, CalendarCheck, Truck, Globe, Clock, Users, BadgeCheck, Star, ShieldCheck, MapPin } from 'lucide-react'
 import { SKILLS, REVIEWS, creatorOf, destOf, fmtNpr, photo } from '@/lib/mock'
 import { Media, Stars, Pill, MoneySplit, CreatorLine, cx } from '@/components/ui'
 import { Palette } from 'lucide-react'
@@ -42,7 +42,7 @@ export default function SkillDetail() {
 
       <div className="flex items-start justify-between gap-3">
         <div>
-          <Link href={`/destination/${d.slug}`} className="text-sm font-bold text-stone/50">📍 {d.name}</Link>
+          <Link href={`/destination/${d.slug}`} className="inline-flex items-center gap-1 text-sm font-bold text-stone/50"><MapPin size={13} /> {d.name}</Link>
           <h1 className="mt-1 text-2xl font-black text-stone md:text-3xl">{skill.title}</h1>
         </div>
         <Stars value={skill.rating} />
