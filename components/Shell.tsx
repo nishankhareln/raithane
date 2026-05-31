@@ -9,17 +9,17 @@ import { useAlerts, isActive } from '@/lib/alertStore'
 import { useAuth } from './Auth'
 import { useLang } from '@/lib/i18n'
 
-const NAV: { href: string; en: string; ne: string; icon: LucideIcon; auth?: boolean }[] = [
+const NAV: { href: string; en: string; ne: string; icon: LucideIcon; local?: boolean }[] = [
   { href: '/', en: 'Home', ne: 'गृह', icon: Home },
   { href: '/explore', en: 'Explore', ne: 'अन्वेषण', icon: Compass },
   { href: '/vibe', en: 'Vibe', ne: 'भाव', icon: Sparkles },
   { href: '/skills', en: 'Skills', ne: 'सीप', icon: Store },
   { href: '/support', en: 'Support', ne: 'सहयोग', icon: HeartHandshake },
-  { href: '/dashboard', en: 'Dashboard', ne: 'ड्यासबोर्ड', icon: LayoutDashboard, auth: true },
+  { href: '/dashboard', en: 'Dashboard', ne: 'ड्यासबोर्ड', icon: LayoutDashboard, local: true },
 ]
 const T = {
-  en: { search: 'Search a place, food, legend or skill…', create: 'Create', profile: 'My profile', proto: 'Prototype · payments mocked · every action pays a local' },
-  ne: { search: 'ठाउँ, खाना, कथा वा सीप खोज्नुहोस्…', create: 'सिर्जना', profile: 'मेरो प्रोफाइल', proto: 'प्रोटोटाइप · भुक्तानी नक्कली · हरेक कार्यले स्थानीयलाई तिर्छ' },
+  en: { search: 'Search a place, food, legend or skill…', create: 'Create', become: 'Become a creator', profile: 'My profile', proto: 'Prototype · payments mocked · every action pays a local' },
+  ne: { search: 'ठाउँ, खाना, कथा वा सीप खोज्नुहोस्…', create: 'सिर्जना', become: 'सर्जक बन्नुहोस्', profile: 'मेरो प्रोफाइल', proto: 'प्रोटोटाइप · भुक्तानी नक्कली · हरेक कार्यले स्थानीयलाई तिर्छ' },
 }
 
 export default function Shell({ children }: { children: React.ReactNode }) {
@@ -30,7 +30,8 @@ export default function Shell({ children }: { children: React.ReactNode }) {
   const active = (href: string) => href === '/' ? path === '/' : path.startsWith(href)
   const t = T[lang]
   const alertCount = useAlerts().filter(isActive).length
-  const { user, openAuth, logout } = useAuth()
+  const { user, openAuth, logout, requestLocal } = useAuth()
+  const isLocal = user?.role === 'local'
 
   const submitSearch = (e: React.FormEvent) => {
     e.preventDefault()
@@ -74,9 +75,21 @@ export default function Shell({ children }: { children: React.ReactNode }) {
           ) : (
             <button onClick={() => openAuth()} className="rounded-full border border-clay bg-white px-3 py-1.5 text-sm font-bold text-clay hover:bg-clay hover:text-white">Sign in</button>
           )}
-          <Link href="/upload" className="flex items-center gap-1.5 rounded-full bg-clay px-3.5 py-2 text-sm font-bold text-white shadow hover:bg-clay-dark">
-            <Plus size={16} /> <span className="hidden sm:inline">{t.create}</span>
-          </Link>
+          {isLocal && (
+            <Link href="/upload" className="flex items-center gap-1.5 rounded-full bg-clay px-3.5 py-2 text-sm font-bold text-white shadow hover:bg-clay-dark">
+              <Plus size={16} /> <span className="hidden sm:inline">{t.create}</span>
+            </Link>
+          )}
+          {!user && (
+            <button onClick={() => openAuth('to start sharing', 'local')} className="flex items-center gap-1.5 rounded-full bg-clay px-3.5 py-2 text-sm font-bold text-white shadow hover:bg-clay-dark">
+              <Plus size={16} /> <span className="hidden sm:inline">{t.create}</span>
+            </button>
+          )}
+          {user && !isLocal && (
+            <button onClick={() => requestLocal()} className="flex items-center gap-1.5 rounded-full border border-clay bg-white px-3 py-2 text-sm font-bold text-clay shadow-sm hover:bg-clay hover:text-white">
+              <Plus size={16} /> <span className="hidden sm:inline">{t.become}</span>
+            </button>
+          )}
         </div>
       </header>
 
@@ -91,7 +104,7 @@ export default function Shell({ children }: { children: React.ReactNode }) {
       <div className="flex flex-1">
         <aside className="sticky top-[3.25rem] hidden h-[calc(100vh-3.25rem)] w-56 shrink-0 flex-col gap-1 self-start border-r border-sand bg-sand/40 p-3 md:flex">
           <nav className="flex flex-1 flex-col gap-1">
-            {NAV.filter(n => !n.auth || user).map(n => {
+            {NAV.filter(n => !n.local || isLocal).map(n => {
               const A = n.icon, on = active(n.href)
               return (
                 <Link key={n.href} href={n.href}
@@ -116,7 +129,7 @@ export default function Shell({ children }: { children: React.ReactNode }) {
       </div>
 
       <nav className="glass fixed bottom-0 left-0 z-40 flex w-full justify-between border-t border-sand px-1 py-1.5 md:hidden">
-        {NAV.filter(n => !n.auth || user).map(n => {
+        {NAV.filter(n => !n.local || isLocal).map(n => {
           const A = n.icon, on = active(n.href)
           return (
             <Link key={n.href} href={n.href}

@@ -7,7 +7,7 @@ import { useAuth } from '@/components/Auth'
 import { useCreations } from '@/lib/userStore'
 
 export default function Dashboard() {
-  const { user, openAuth } = useAuth()
+  const { user, openAuth, requestLocal } = useAuth()
   const creations = useCreations()
 
   if (!user) return (
@@ -16,6 +16,15 @@ export default function Dashboard() {
       <h1 className="text-2xl font-black text-stone">Sign in to see your dashboard</h1>
       <p className="mt-1 text-sm text-stone/55">Your earnings and stats are private to your account.</p>
       <button onClick={() => openAuth('to view your dashboard')} className="mt-5 rounded-full bg-clay px-6 py-2.5 text-sm font-black text-white hover:bg-clay-dark">Sign in</button>
+    </div>
+  )
+
+  if (user.role !== 'local') return (
+    <div className="mx-auto max-w-md py-16 text-center">
+      <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-clay/10 text-clay"><Wallet size={26} /></div>
+      <h1 className="text-2xl font-black text-stone">The dashboard is for local creators</h1>
+      <p className="mt-1 text-sm text-stone/55">Earnings and stats live here once you start sharing. Switch to a creator account to begin.</p>
+      <button onClick={() => requestLocal()} className="mt-5 rounded-full bg-clay px-6 py-2.5 text-sm font-black text-white hover:bg-clay-dark">Become a creator</button>
     </div>
   )
 

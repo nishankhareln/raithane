@@ -1,12 +1,13 @@
 'use client'
 import { useState, useMemo } from 'react'
 import Link from 'next/link'
-import { Compass, Sparkles, ArrowRight, TriangleAlert, type LucideIcon } from 'lucide-react'
+import { Compass, Sparkles, TriangleAlert, type LucideIcon } from 'lucide-react'
 import {
-  POSTS, SKILLS, VIBES, CATEGORIES, CREATORS, DESTINATIONS, destOf, photo, alertKindOf, CURRENT_USER,
+  POSTS, SKILLS, VIBES, CATEGORIES, CREATORS, DESTINATIONS, destOf, photo, alertKindOf,
   type CategoryKey,
 } from '@/lib/mock'
 import { FeedCard, SkillCard, TipCard } from '@/components/cards'
+import TripBanner from '@/components/TripBanner'
 import { Media, cx } from '@/components/ui'
 import { useCreations, toPost, toSkill } from '@/lib/userStore'
 import { useAlerts, isActive } from '@/lib/alertStore'
@@ -24,7 +25,6 @@ export default function HomeFeed() {
   const allSkills = [...userSkills, ...SKILLS]
   const tips = allPosts.filter(p => p.isTip)
   const content = allPosts.filter(p => !p.isTip)
-  const trip = destOf(CURRENT_USER.tripDestinationId)
   const liveAlerts = useAlerts().filter(isActive)
   const postById = (id: string) => allPosts.find(p => p.id === id)!
   const skillById = (id: string) => allSkills.find(s => s.id === id)!
@@ -94,15 +94,8 @@ export default function HomeFeed() {
         </div>
       </section>
 
-      {/* trip-context personalization */}
-      <Link href={`/destination/${trip.slug}`} className="flex items-center gap-3 rounded-2xl border border-plum/25 bg-plum/5 px-4 py-3 hover:bg-plum/10">
-        <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-plum/15 text-plum"><Compass size={20} /></span>
-        <div className="flex-1">
-          <div className="text-sm font-bold text-stone">Because you’re visiting <span className="text-plum">{trip.name}</span></div>
-          <div className="text-xs text-stone/55">Your feed is tuned to your trip and your vibes. Tap to open the {trip.name} hub.</div>
-        </div>
-        <ArrowRight size={18} className="text-plum" />
-      </Link>
+      {/* trip-context personalization — resolved from GPS / Near me (falls back to a picker) */}
+      <TripBanner />
 
       {/* DISCOVER BY VIBE — real photos */}
       <section>

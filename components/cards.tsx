@@ -11,9 +11,10 @@ export function FeedCard({ post }: { post: Post }) {
   const c = creatorOf(post.creatorId), d = destOf(post.destinationId), cat = catOf(post.category)
   const Cat = cat.icon
   const [liked, setLiked] = useState(false)
-  const { requireAuth } = useAuth()
+  const { requireAuth, user } = useAuth()
   const { t } = useLang()
   const premium = post.type === 'PREMIUM'
+  const isLocal = user?.role === 'local'
   return (
     <article className="card hover-lift rise flex flex-col overflow-hidden rounded-2xl">
       <Link href={`/post/${post.id}`}>
@@ -51,10 +52,18 @@ export function FeedCard({ post }: { post: Post }) {
 
         {premium && (
           <div className="mt-2.5 border-t border-sand pt-2.5">
-            <MoneySplit amount={post.priceNpr} compact />
-            <Link href={`/post/${post.id}`} className="mt-1.5 block w-full rounded-full bg-clay px-3 py-2 text-center text-xs font-bold text-white hover:bg-clay-dark">
-              Unlock {fmtNpr(post.priceNpr)}
-            </Link>
+            {isLocal ? (
+              <Link href={`/post/${post.id}`} className="block w-full rounded-full bg-forest px-3 py-2 text-center text-xs font-bold text-white hover:brightness-95">
+                Open · free for locals
+              </Link>
+            ) : (
+              <>
+                <MoneySplit amount={post.priceNpr} compact />
+                <Link href={`/post/${post.id}`} className="mt-1.5 block w-full rounded-full bg-clay px-3 py-2 text-center text-xs font-bold text-white hover:bg-clay-dark">
+                  Unlock {fmtNpr(post.priceNpr)}
+                </Link>
+              </>
+            )}
           </div>
         )}
       </div>

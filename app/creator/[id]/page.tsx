@@ -3,13 +3,14 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { useParams } from 'next/navigation'
 import { ArrowLeft, BadgeCheck, Users, HeartHandshake, Trophy, Heart, MapPin } from 'lucide-react'
-import { CREATORS, POSTS, SKILLS, SUPPORTERS, destOf, fmtNpr, type Creator } from '@/lib/mock'
+import { CREATORS, POSTS, SKILLS, SUPPORTERS, destOf, fmtNpr, guideOfCreator, type Creator } from '@/lib/mock'
 import { useCreations, toPost, toSkill } from '@/lib/userStore'
 import { useAuth } from '@/components/Auth'
 import { useFollows, toggleFollow } from '@/lib/social'
 import { Avatar, Stars, Pill, cx } from '@/components/ui'
 import { FeedCard, SkillCard } from '@/components/cards'
 import Checkout from '@/components/Checkout'
+import GuideBooking from '@/components/GuideBooking'
 
 const TIPS = [200, 500, 1000]
 
@@ -18,8 +19,9 @@ export default function CreatorProfile() {
   const { user, requireAuth, openAuth } = useAuth()
   const creations = useCreations()
   const isMe = id === 'me'
+  const isLocal = user?.role === 'local'
   const c: Creator | undefined = isMe
-    ? (user ? { id: 'me', name: user.name, img: 'traveler,backpacker,person', grad: 'linear-gradient(135deg,#16a34a,#2563eb)', destinationId: 'kathmandu', bio: 'Your traveler profile on Raithane — your posts, your unlocks, your follows.', rating: 0, reviews: 0, verified: false, earningsMonth: 0, followers: 0, supporters: 0 } : undefined)
+    ? (user ? { id: 'me', name: user.name, img: isLocal ? 'nepali,artisan,craft,person' : 'traveler,backpacker,person', grad: 'linear-gradient(135deg,#16a34a,#2563eb)', destinationId: 'kathmandu', bio: isLocal ? 'Your creator profile on Raithane — your stories, skills and supporters.' : 'Your traveler profile on Raithane — your unlocks, follows and supports.', rating: 0, reviews: 0, verified: false, earningsMonth: 0, followers: 0, supporters: 0 } : undefined)
     : CREATORS.find(x => x.id === id)
   const [tab, setTab] = useState<'posts' | 'skills'>('posts')
   const [tip, setTip] = useState(0)
@@ -36,6 +38,7 @@ export default function CreatorProfile() {
   )
   if (!c) return <div className="py-20 text-center text-stone/50">Creator not found.</div>
   const d = destOf(c.destinationId)
+  const guide = isMe ? undefined : guideOfCreator(c.id)
   const posts = isMe
     ? creations.filter(x => x.kind === 'post').map(toPost)
     : [...creations.filter(x => x.kind === 'post' && x.creatorId === c.id).map(toPost), ...POSTS.filter(p => p.creatorId === c.id && !p.isTip)]
@@ -56,7 +59,7 @@ export default function CreatorProfile() {
             <div className="flex items-center gap-1 text-sm text-white/85"><MapPin size={13} /> {d.name}, {d.district}</div>
             <div className="mt-1.5 flex flex-wrap gap-3 text-sm">
               <span className="flex items-center gap-1 font-bold"><span className="rounded bg-white/20 px-1.5 py-0.5">★ {c.rating}</span> {c.reviews} reviews</span>
-              <span className="flex items-center gap-1"><Users size={14} /> {c.followers.toLocaleString()}</span>
+              <span className="flex items-center gap-1"><Users size={14} /> {(c.followers + (following ? 1 : 0)).toLocaleString()}</span>
               <span className="flex items-center gap-1"><HeartHandshake size={14} /> {c.supporters} supporters</span>
             </div>
           </div>
@@ -71,6 +74,9 @@ export default function CreatorProfile() {
           </div>
         )}
       </div>
+
+      {/* book this local as your guide — availability + date selection */}
+      {guide && <GuideBooking guide={guide} creatorName={c.name} />}
 
       {/* SUPPORT (was donations) — not on your own profile */}
       {!isMe && (

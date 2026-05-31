@@ -47,13 +47,17 @@ const NE: Record<string, string> = {
   'Heritage voice stories': 'सम्पदा स्वर कथा', 'What’s your vibe?': 'तपाईंको भाव के हो?',
   'Destinations': 'गन्तव्यहरू', 'Creators to follow': 'फलो गर्न सर्जकहरू', 'Stories for this vibe': 'यो भावका कथाहरू',
   'Top supporters': 'शीर्ष सहयोगी', 'Support a creator': 'सर्जकलाई सहयोग गर्नुहोस्',
+  'Your local guide': 'तपाईंको स्थानीय गाइड', 'Here I can show you': 'यहाँ म तपाईंलाई देखाउन सक्छु',
+  'See profile & support': 'प्रोफाइल हेर्नुहोस् र सहयोग गर्नुहोस्',
+  'Local guides': 'स्थानीय गाइडहरू', 'View & book': 'हेर्नुहोस् र बुक गर्नुहोस्',
+  'Pick a local to show you around — see their profile, then choose a date.': 'तपाईंलाई घुमाउन एक स्थानीय छान्नुहोस् — प्रोफाइल हेर्नुहोस्, अनि मिति छान्नुहोस्।',
   'Heritage Preservation Fund': 'सम्पदा संरक्षण कोष', 'Preservation projects': 'संरक्षण परियोजनाहरू',
 
   // ---- destination names ----
   'Bandipur': 'बन्दिपुर', 'Panauti': 'पनौती', 'Bhaktapur': 'भक्तपुर', 'Tansen': 'तानसेन',
   'Ghandruk': 'घान्द्रुक', 'Pokhara': 'पोखरा', 'Kathmandu': 'काठमाडौं',
   'Pashupatinath': 'पशुपतिनाथ', 'Boudhanath': 'बौद्धनाथ', 'Swayambhunath': 'स्वयम्भूनाथ',
-  'Kathmandu Durbar Square': 'काठमाडौं दरबार स्क्वायर',
+  'Kathmandu Durbar Square': 'काठमाडौं दरबार स्क्वायर', 'Hadigaun': 'हडिगाउँ',
 
   // ---- destination descriptions ----
   'Nepal’s holiest Shiva temple, on the banks of the sacred Bagmati — a UNESCO site of golden roofs, cremation ghats, sadhus and the evening aarti.':
@@ -64,6 +68,8 @@ const NE: Record<string, string> = {
     'सहरको पश्चिमी डाँडामाथिको “वानर मन्दिर” — बुद्धका सर्वदर्शी आँखा, ३६५ खुड्किला, र उपत्यकाभन्दै पुरानो किंवदन्ती।',
   'The old royal plaza of the Malla and Shah kings — Hanuman Dhoka palace, exquisite woodcarving, and the home of the living goddess Kumari.':
     'मल्ल र शाह राजाहरूको पुरानो दरबार क्षेत्र — हनुमानढोका दरबार, उत्कृष्ट काठको कुँदाइ, र जीवित देवी कुमारीको निवास।',
+  'One of the Kathmandu Valley’s oldest towns — likely the lost Licchavi capital. Hidden courtyards, the Satya Narayan shrine where the valley’s earliest settlement was unearthed, and “Kahi Nabhayeko Jatra,” the festival like no other.':
+    'काठमाडौं उपत्यकाको सबैभन्दा पुराना बस्तीहरूमध्ये एक — सम्भवतः हराएको लिच्छविकालीन राजधानी। लुकेका चोकहरू, उपत्यकाकै सबैभन्दा पुरानो बस्ती फेला परेको सत्यनारायण मन्दिर, र “कहीँ नभएको जात्रा” — कतै नभएको चाड।',
 }
 
 const Ctx = createContext<{ lang: Lang; setLang: (l: Lang) => void; t: (s: string) => string }>({

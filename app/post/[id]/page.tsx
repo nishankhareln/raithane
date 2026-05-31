@@ -27,8 +27,11 @@ export default function PostDetail() {
 
   const c = creatorOf(post.creatorId), d = destOf(post.destinationId), cat = catOf(post.category)
   const Cat = cat.icon
+  const isLocal = user?.role === 'local'
   const premium = post.type === 'PREMIUM'
-  const reveal = !premium || unlocked || mine
+  const freeForLocal = premium && isLocal && !unlocked && !mine
+  const reveal = !premium || unlocked || mine || isLocal
+  const story = post.story ?? fullerBody(post.title, c.name, d.name)
 
   const postComment = () => requireAuth('to comment', () => {
     if (!draft.trim() || !user) return
@@ -63,7 +66,7 @@ export default function PostDetail() {
       </div>
 
       {/* real-time AI narration (ElevenLabs) */}
-      <NarrateButton text={`${post.title}. ${post.teaser}${reveal && !post.phrases ? ' ' + fullerBody(post.title, c.name, d.name) : ''}`} />
+      <NarrateButton text={`${post.title}. ${post.teaser}${reveal && !post.phrases ? ' ' + story : ''}`} />
 
       {/* free teaser — always visible */}
       <p className="text-[15px] leading-relaxed text-stone/80">{post.teaser}</p>
@@ -95,19 +98,20 @@ export default function PostDetail() {
 
       {!post.phrases && (reveal ? (
         <div className="space-y-3 rounded-2xl border border-forest/20 bg-forest/5 p-4 text-[15px] leading-relaxed text-stone/80">
-          <div className="flex items-center gap-1.5 text-sm font-bold text-forest"><BadgeCheck size={16} /> {premium ? 'Unlocked — full story' : 'Full story'}</div>
-          <p>{fullerBody(post.title, c.name, d.name)}</p>
+          <div className="flex items-center gap-1.5 text-sm font-bold text-forest"><BadgeCheck size={16} /> {freeForLocal ? 'Free for locals — full story' : premium ? 'Unlocked — full story' : 'Full story'}</div>
+          <p>{story}</p>
           <p>{post.language !== 'Nepali' && post.language !== 'English'
             ? `Recorded in ${post.language}. The original voice is preserved; a youth translator added the Nepali & English text below.`
             : `Shared by ${c.name} in their own words.`}</p>
         </div>
       ) : (
         <div className="relative overflow-hidden rounded-2xl border border-sand">
-          {/* blurred preview of locked content */}
-          <div className="pointer-events-none select-none p-4 text-[15px] leading-relaxed text-stone/70 blur-[5px]">
-            {fullerBody(post.title, c.name, d.name)}
+          {/* blurred preview sits behind and fills the box */}
+          <div aria-hidden className="pointer-events-none absolute inset-0 select-none p-4 text-[15px] leading-relaxed text-stone/70 blur-[5px]">
+            {story}
           </div>
-          <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-paper/70 p-5 text-center backdrop-blur-[2px]">
+          {/* unlock CTA is in normal flow, so the box always grows to fit the button */}
+          <div className="relative flex flex-col items-center justify-center gap-3 bg-paper/70 p-5 text-center backdrop-blur-[2px]">
             <div className="flex h-12 w-12 items-center justify-center rounded-full bg-clay text-white"><Lock size={22} /></div>
             <div>
               <div className="text-base font-black text-stone">Unlock the full story</div>

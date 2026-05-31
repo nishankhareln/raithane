@@ -7,7 +7,7 @@ import { MoneySplit, Media, cx } from '@/components/ui'
 import { addCreation } from '@/lib/userStore'
 import RecordedAudio from '@/components/RecordedAudio'
 import { useAuth } from '@/components/Auth'
-import { LogIn } from 'lucide-react'
+import { LogIn, Sparkles } from 'lucide-react'
 
 type Share = 'story' | 'photo' | 'skill'
 
@@ -16,7 +16,7 @@ function speak(text: string) {
 }
 
 export default function Upload() {
-  const { user, openAuth } = useAuth()
+  const { user, openAuth, requestLocal } = useAuth()
   const [step, setStep] = useState(0)
   const [share, setShare] = useState<Share | null>(null)
   const [destId, setDestId] = useState<string | null>(null)
@@ -80,7 +80,16 @@ export default function Upload() {
       <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-clay/10 text-clay"><LogIn size={26} /></div>
       <h1 className="text-2xl font-black text-stone">Sign in to share</h1>
       <p className="mt-1 text-sm text-stone/55">Create an account to post stories, photos and skills — and start earning.</p>
-      <button onClick={() => openAuth('to start sharing')} className="mt-5 rounded-full bg-clay px-6 py-2.5 text-sm font-black text-white hover:bg-clay-dark">Sign in / Register</button>
+      <button onClick={() => openAuth('to start sharing', 'local')} className="mt-5 rounded-full bg-clay px-6 py-2.5 text-sm font-black text-white hover:bg-clay-dark">Sign in / Register</button>
+    </div>
+  )
+
+  if (user.role !== 'local') return (
+    <div className="mx-auto max-w-md py-16 text-center">
+      <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-clay/10 text-clay"><Sparkles size={26} /></div>
+      <h1 className="text-2xl font-black text-stone">Creating is for locals</h1>
+      <p className="mt-1 text-sm text-stone/55">You’re exploring as a traveler. Switch to a local creator account to share stories and skills — and keep 90% of every payment.</p>
+      <button onClick={() => requestLocal()} className="mt-5 rounded-full bg-clay px-6 py-2.5 text-sm font-black text-white hover:bg-clay-dark">Become a creator</button>
     </div>
   )
 

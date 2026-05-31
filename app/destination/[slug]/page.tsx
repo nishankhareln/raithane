@@ -2,10 +2,10 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { useParams } from 'next/navigation'
-import { ArrowLeft, MapPin, LayoutGrid, Lightbulb, Store, TriangleAlert } from 'lucide-react'
-import { DESTINATIONS, POSTS, SKILLS, CATEGORIES, VIBES, destImg, alertKindOf, type CategoryKey } from '@/lib/mock'
+import { ArrowLeft, MapPin, LayoutGrid, Lightbulb, Store, TriangleAlert, Users } from 'lucide-react'
+import { DESTINATIONS, POSTS, SKILLS, CATEGORIES, GUIDES, VIBES, destImg, alertKindOf, creatorOf, catOf, guidesOf, fmtNpr, type CategoryKey } from '@/lib/mock'
 import { FeedCard, SkillCard, TipCard } from '@/components/cards'
-import { Pill, Media, cx } from '@/components/ui'
+import { Pill, Media, Avatar, Stars, VerifiedBadge, cx } from '@/components/ui'
 import type { LucideIcon } from 'lucide-react'
 import { useAlerts, isActive } from '@/lib/alertStore'
 import AlertCard from '@/components/AlertCard'
@@ -36,6 +36,10 @@ export default function DestinationHub() {
   const tips = POSTS.filter(p => p.destinationId === d.id && p.isTip)
   const skills = SKILLS.filter(s => s.destinationId === d.id)
   const shown = cat === 'ALL' ? posts : cat === 'SKILL' ? [] : posts.filter(p => p.category === cat)
+
+  // local guides who present & can be booked for this area (fall back to whoever posts here)
+  const fallbackCreatorId = (posts[0] ?? tips[0] ?? skills[0])?.creatorId
+  const guides = guidesOf(d.id).length ? guidesOf(d.id) : GUIDES.filter(g => g.creatorId === fallbackCreatorId)
 
   return (
     <div className="space-y-5">
@@ -68,6 +72,42 @@ export default function DestinationHub() {
         <section>
           <h2 className="mb-2 flex items-center gap-1.5 text-base font-black text-stone"><Lightbulb size={16} className="text-lake" /> {t('Local know-how')}</h2>
           <div className="grid gap-3 sm:grid-cols-2">{tips.map(tp => <TipCard key={tp.id} post={tp} />)}</div>
+        </section>
+      )}
+
+      {/* local guides — compare, view profiles, then book a date */}
+      {guides.length > 0 && (
+        <section>
+          <h2 className="mb-1 flex items-center gap-1.5 text-base font-black text-stone"><Users size={16} className="text-forest" /> {t('Local guides')} ({guides.length})</h2>
+          <p className="mb-2.5 text-xs text-stone/55">{t('Pick a local to show you around — see their profile, then choose a date.')}</p>
+          <div className="grid gap-3 sm:grid-cols-2">
+            {guides.map(g => {
+              const gc = creatorOf(g.creatorId)
+              return (
+                <div key={g.id} className="flex flex-col rounded-2xl border-2 border-forest/20 bg-white p-3.5">
+                  <div className="flex items-start gap-3">
+                    <Link href={`/creator/${gc.id}`}><Avatar creator={gc} size={46} /></Link>
+                    <div className="min-w-0 flex-1">
+                      <Link href={`/creator/${gc.id}`} className="flex items-center gap-1 font-black text-stone hover:text-forest">{gc.name}{gc.verified && <VerifiedBadge size={13} />}</Link>
+                      <div className="flex items-center gap-1 text-[11px] text-stone/50"><Stars value={gc.rating} size={11} /> · {gc.reviews} reviews</div>
+                    </div>
+                  </div>
+                  <p className="mt-2 line-clamp-2 text-[13px] text-stone/70">{g.tagline}</p>
+                  <div className="mt-2 flex flex-wrap gap-1">
+                    {g.specialties.map(k => { const cc = catOf(k); const CI = cc.icon; return <span key={k} className="inline-flex items-center gap-1 rounded-full bg-forest/10 px-2 py-0.5 text-[10px] font-bold text-forest"><CI size={10} /> {t(cc.label)}</span> })}
+                  </div>
+                  <div className="mt-1.5 text-[11px] text-stone/45">{g.languages.join(' · ')}</div>
+                  <div className="mt-auto flex items-center justify-between gap-2 border-t border-sand pt-2.5">
+                    <div>
+                      <div className="text-sm font-black text-forest">{fmtNpr(g.priceNpr)}</div>
+                      <div className="text-[10px] text-stone/45">{g.durationLabel}</div>
+                    </div>
+                    <Link href={`/creator/${gc.id}`} className="rounded-full bg-forest px-4 py-2 text-xs font-bold text-white hover:brightness-95">{t('View & book')}</Link>
+                  </div>
+                </div>
+              )
+            })}
+          </div>
         </section>
       )}
 
