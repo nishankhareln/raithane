@@ -46,6 +46,7 @@ Stop with Ctrl+C.
 ## Tech
 Next.js 16 (App Router) · React 19 · TypeScript · Tailwind v4 · Leaflet/OpenStreetMap · lucide-react.
 Mocked: payments, auth, DB (per spec — production targets: Prisma+Postgres, Auth.js, Khalti/eSewa).
+We had used mocked data using the leaflet React js
 
 ## Wow moments to demo
 1. Home hero → **Find your vibe** → pick *Spiritual* → watch destinations/creators re-filter.
